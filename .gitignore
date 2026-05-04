@@ -1,0 +1,12 @@
+# Original HEVC source files (too large / not needed)
+videoss/1aur.mp4
+videoss/aur.mp4
+videoss/MERCHANTNAVY(3).mp4
+videoss/MERCHANTNAVY(z).mp4
+videoss/new teaser.mp4
+videoss/TEASERRRR.mp4
+videoss/taplu.mp4
+videoss/hogya.mp4
+
+# Claude internal
+.claude/

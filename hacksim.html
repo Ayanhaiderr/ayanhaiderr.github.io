@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>HACKSIM — The Game</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080b12;--panel:#0e1420;--panel2:#131c2e;--border:#1e3040;
+  --g:#00ff88;--c:#00d4ff;--y:#ffd700;--r:#ff3355;--p:#cc44ff;--o:#ff8800;
+  --text:#8899aa;--white:#ddeeff;
+  --shadow-g:0 0 20px rgba(0,255,136,.25);--shadow-c:0 0 20px rgba(0,212,255,.25);
+}
+html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;font-size:16px}
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+/* ── GLOBAL COMPONENTS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.75rem;border:none;border-radius:6px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.05em;user-select:none}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--g);color:#000;box-shadow:var(--shadow-g)}
+.btn-primary:hover{background:#22ffaa;box-shadow:0 0 30px rgba(0,255,136,.4)}
+.btn-secondary{background:transparent;color:var(--c);border:1.5px solid var(--c);box-shadow:var(--shadow-c)}
+.btn-secondary:hover{background:rgba(0,212,255,.1)}
+.btn-danger{background:transparent;color:var(--r);border:1.5px solid var(--r)}
+.btn-danger:hover{background:rgba(255,51,85,.1)}
+.btn-shop{background:var(--y);color:#000;box-shadow:0 0 20px rgba(255,215,0,.3)}
+.btn-shop:hover{box-shadow:0 0 35px rgba(255,215,0,.5)}
+.btn-lg{padding:1rem 2.5rem;font-size:1.1rem}
+.btn-sm{padding:.45rem 1rem;font-size:.8rem}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:4px;font-size:.7rem;font-weight:700;letter-spacing:.1em}
+.badge-easy{background:rgba(0,255,136,.15);color:var(--g);border:1px solid rgba(0,255,136,.3)}
+.badge-med{background:rgba(255,136,0,.15);color:var(--o);border:1px solid rgba(255,136,0,.3)}
+.badge-hard{background:rgba(255,51,85,.15);color:var(--r);border:1px solid rgba(255,51,85,.3)}
+.badge-expert{background:rgba(204,68,255,.15);color:var(--p);border:1px solid rgba(204,68,255,.3)}
+/* ── HEADER BAR ── */
+#hud{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:rgba(8,11,18,.95);border-bottom:1px solid var(--border);z-index:50;align-items:center;padding:0 1rem;gap:.8rem;backdrop-filter:blur(8px)}
+#hud.show{display:flex}
+.hud-logo{font-size:1rem;font-weight:900;color:var(--g);letter-spacing:.2em;text-shadow:0 0 15px var(--g);white-space:nowrap}
+.hud-sep{width:1px;height:24px;background:var(--border)}
+.hud-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.hud-stat label{font-size:.55rem;color:var(--text);letter-spacing:.15em;text-transform:uppercase}
+.hud-stat span{font-size:.9rem;font-weight:700}
+.hud-lvl{color:var(--g);text-shadow:0 0 8px var(--g)}
+.hud-xp{color:var(--c)}
+.hud-cr{color:var(--y)}
+.hud-rank{color:var(--o);white-space:nowrap;font-size:.8rem}
+.xp-wrap{flex:1;display:flex;flex-direction:column;gap:3px;min-width:60px;max-width:180px}
+.xp-wrap label{font-size:.55rem;color:var(--text);letter-spacing:.15em}
+.xp-track{height:5px;background:#1a2535;border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--c));border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px var(--g)}
+.hud-actions{margin-left:auto;display:flex;gap:.5rem}
+/* ── START SCREEN ── */
+#s-start{align-items:center;justify-content:center;background:var(--bg)}
+.start-logo{font-size:clamp(3rem,10vw,6rem);font-weight:900;color:var(--g);text-shadow:0 0 40px var(--g),0 0 80px rgba(0,255,136,.3);letter-spacing:.15em;animation:logo-pulse 3s ease-in-out infinite;text-align:center}
+@keyframes logo-pulse{0%,100%{text-shadow:0 0 40px var(--g),0 0 80px rgba(0,255,136,.3)}50%{text-shadow:0 0 60px var(--g),0 0 120px rgba(0,255,136,.5),0 0 200px rgba(0,255,136,.2)}}
+.start-tagline{color:var(--text);font-size:.9rem;letter-spacing:.4em;margin:.5rem 0 3rem;text-align:center}
+.start-save-info{margin-bottom:1.5rem;padding:.8rem 1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:8px;text-align:center;font-size:.82rem;color:var(--text);display:none}
+.start-save-info span{color:var(--y);font-weight:700}
+.start-btns{display:flex;flex-direction:column;gap:.8rem;align-items:center}
+.start-footer{position:absolute;bottom:1.5rem;font-size:.65rem;color:#334;letter-spacing:.2em;text-align:center}
+/* ── MISSIONS SCREEN ── */
+#s-missions{background:var(--bg);padding-top:56px}
+.missions-header{padding:1.25rem 1.25rem .5rem;display:flex;align-items:center;gap:1rem}
+.missions-title{font-size:1rem;color:var(--text);letter-spacing:.3em;text-transform:uppercase;flex:1}
+.missions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;padding:1rem 1.25rem;overflow-y:auto;flex:1;align-content:start}
+.mission-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.25rem;cursor:pointer;transition:all .2s;position:relative;overflow:clip}
+.mission-card::before{content:'';position:absolute;inset:0;opacity:0;transition:.2s;border-radius:10px}
+.mission-card.easy::before{background:linear-gradient(135deg,rgba(0,255,136,.06),transparent)}
+.mission-card.med::before{background:linear-gradient(135deg,rgba(255,136,0,.06),transparent)}
+.mission-card.hard::before{background:linear-gradient(135deg,rgba(255,51,85,.06),transparent)}
+.mission-card.expert::before{background:linear-gradient(135deg,rgba(204,68,255,.06),transparent)}
+.mission-card:hover:not(.locked)::before{opacity:1}
+.mission-card:hover:not(.locked){border-color:#2a4060;transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.mission-card.locked{opacity:.45;cursor:not-allowed}
+.mission-card.done{border-color:#1a3a22}
+.mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem;gap:.5rem}
+.mc-top > div:first-child{flex:1;min-width:0}
+.mc-name{font-size:1rem;font-weight:700;color:var(--white);word-break:break-word}
+.badge{white-space:nowrap}
+.mc-done-mark{color:var(--g);font-size:1.2rem}
+.mc-desc{font-size:.8rem;color:var(--text);line-height:1.6;margin-bottom:1rem}
+.mc-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.mc-rewards{display:flex;gap:.75rem;font-size:.8rem;font-weight:700}
+.mc-xp{color:var(--c)}.mc-cr{color:var(--y)}
+.mc-req{font-size:.7rem;color:var(--text)}
+.mc-lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,11,18,.7);border-radius:10px;font-size:.85rem;color:var(--text);letter-spacing:.15em}
+/* ── SHOP SCREEN ── */
+#s-shop{background:var(--bg);padding-top:56px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;padding:1rem 1.25rem;overflow-y:auto;flex:1}
+.tool-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:.2s}
+.tool-card.owned{border-color:#1a3a22}
+.tool-icon{font-size:2rem;margin-bottom:.5rem}
+.tool-name{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.4rem}
+.tool-desc{font-size:.78rem;color:var(--text);line-height:1.5;margin-bottom:1rem}
+.tool-cost{font-size:.85rem;font-weight:700;color:var(--y)}
+.tool-owned{color:var(--g);font-size:.85rem;font-weight:700}
+/* ── GAME SCREEN ── */
+#s-game{background:var(--bg);padding-top:56px;align-items:stretch}
+#game-context{background:var(--panel);border-bottom:1px solid var(--border);padding:.75rem 1.25rem;display:flex;align-items:center;gap:1rem;flex-shrink:0}
+#gc-mission{font-size:.8rem;font-weight:700;color:var(--white)}
+#gc-step{font-size:.7rem;color:var(--text)}
+#gc-steps-bar{display:flex;gap:.4rem;margin-left:auto}
+.step-dot{width:10px;height:10px;border-radius:50%;background:var(--panel2);border:1.5px solid var(--border);transition:.3s}
+.step-dot.done{background:var(--g);border-color:var(--g);box-shadow:0 0 8px var(--g)}
+.step-dot.active{border-color:var(--c);box-shadow:0 0 8px var(--c)}
+#game-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:1.5rem 1rem}
+#game-title{font-size:1.3rem;font-weight:900;color:var(--white);margin-bottom:.3rem;text-align:center;letter-spacing:.05em}
+#game-instructions{font-size:.85rem;color:var(--text);text-align:center;max-width:480px;line-height:1.6;margin-bottom:1.5rem}
+/* ── CRACK GAME ── */
+#crack-wrap{width:100%;max-width:400px}
+#crack-slots{display:flex;gap:.6rem;justify-content:center;margin-bottom:.8rem}
+.crack-slot{width:62px;height:72px;background:var(--panel2);border:2px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:var(--white);transition:.2s}
+.crack-slot.active{border-color:var(--c);box-shadow:0 0 15px rgba(0,212,255,.3)}
+.crack-slot.filled{border-color:var(--g)}
+#crack-history{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;min-height:80px}
+.crack-row{display:flex;align-items:center;gap:.5rem;justify-content:center}
+.crack-hist-slot{width:46px;height:50px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;border:1.5px solid;transition:.3s}
+.slot-hit{background:rgba(0,255,136,.15);border-color:var(--g);color:var(--g)}
+.slot-close{background:rgba(255,215,0,.12);border-color:var(--y);color:var(--y)}
+.slot-miss{background:rgba(30,48,64,.5);border-color:var(--border);color:var(--text)}
+.crack-row-dots{display:flex;gap:3px;align-items:center}
+.cdot{width:11px;height:11px;border-radius:50%}
+.cdot-hit{background:var(--g);box-shadow:0 0 6px var(--g)}
+.cdot-close{background:var(--y)}
+.cdot-miss{background:var(--border)}
+#crack-keypad{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:.8rem}
+.crack-key{height:52px;background:var(--panel2);border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;color:var(--white);cursor:pointer;transition:.15s}
+.crack-key:hover{border-color:var(--c);color:var(--c);background:rgba(0,212,255,.08)}
+.crack-key:active{transform:scale(.93)}
+.crack-key.bs{color:var(--r);border-color:rgba(255,51,85,.3)}
+.crack-key.enter{color:var(--g);border-color:rgba(0,255,136,.3);font-size:.8rem}
+#crack-attempts{text-align:center;font-size:.8rem;color:var(--text);margin-bottom:.8rem}
+#crack-hint-msg{text-align:center;min-height:22px;font-size:.82rem;font-weight:600;transition:.3s}
+/* ── BYPASS GAME ── */
+#bypass-wrap{width:100%;max-width:380px}
+#bypass-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+#bypass-target{font-size:.8rem;color:var(--text)}
+#bypass-timer-wrap{display:flex;align-items:center;gap:.5rem}
+#bypass-timer{font-size:1.1rem;font-weight:700;color:var(--y)}
+#bypass-grid{display:grid;gap:.5rem;margin-bottom:1rem}
+.bypass-cell{height:60px;background:var(--panel2);border:2px solid var(--border);border-radius:8px;font-size:1.3rem;font-weight:900;color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;user-select:none}
+.bypass-cell:hover{border-color:var(--c);color:var(--c);background:rgba(0,212,255,.08)}
+.bypass-cell:active{transform:scale(.94)}
+.bypass-cell.correct{background:rgba(0,255,136,.15);border-color:var(--g);color:var(--g);box-shadow:0 0 15px rgba(0,255,136,.3)}
+.bypass-cell.wrong{background:rgba(255,51,85,.15);border-color:var(--r);animation:shake .25s}
+.bypass-cell.used{opacity:.25;pointer-events:none}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#bypass-progress-bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-bottom:.5rem}
+#bypass-progress-fill{height:100%;background:var(--g);border-radius:3px;transition:width .3s;box-shadow:0 0 8px var(--g)}
+/* ── MEMORY GAME ── */
+#memory-wrap{width:100%;max-width:340px}
+#memory-panels{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+.mem-panel{height:120px;border-radius:12px;cursor:pointer;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:2.5rem;transition:.15s;opacity:.35}
+.mem-panel.lit{opacity:1;transform:scale(1.04);box-shadow:0 0 30px currentColor}
+.mem-panel.clickable{opacity:.75;cursor:pointer}
+.mem-panel.clickable:hover{opacity:1;transform:scale(1.03)}
+.mem-panel.clickable:active{transform:scale(.97)}
+.mem-panel.wrong{animation:mem-shake .3s}
+@keyframes mem-shake{0%,100%{transform:scale(1.04)}50%{transform:scale(.97)}}
+.mp-red{background:rgba(255,51,85,.15);border-color:rgba(255,51,85,.4);color:var(--r)}
+.mp-blue{background:rgba(0,212,255,.15);border-color:rgba(0,212,255,.4);color:var(--c)}
+.mp-green{background:rgba(0,255,136,.15);border-color:rgba(0,255,136,.4);color:var(--g)}
+.mp-yellow{background:rgba(255,215,0,.15);border-color:rgba(255,215,0,.4);color:var(--y)}
+.mp-red.lit{background:rgba(255,51,85,.5);border-color:var(--r)}
+.mp-blue.lit{background:rgba(0,212,255,.5);border-color:var(--c)}
+.mp-green.lit{background:rgba(0,255,136,.5);border-color:var(--g)}
+.mp-yellow.lit{background:rgba(255,215,0,.5);border-color:var(--y)}
+#memory-seq-display{text-align:center;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-bottom:.5rem}
+#memory-seq-fill{height:100%;background:var(--c);border-radius:3px;transition:width .4s}
+#memory-info{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--text);margin-bottom:.75rem}
+.mem-round-dots{display:flex;gap:.4rem}
+.mrd{width:10px;height:10px;border-radius:50%;background:var(--panel2);border:1.5px solid var(--border);transition:.3s}
+.mrd.done{background:var(--g);border-color:var(--g)}
+.mrd.active{border-color:var(--c);box-shadow:0 0 6px var(--c)}
+/* ── PATTERN GAME ── */
+#pattern-wrap{width:100%;max-width:380px}
+#pattern-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1rem}
+.pat-card{height:72px;background:var(--panel2);border:2px solid var(--border);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.6rem;transition:.2s;position:relative;overflow:hidden}
+.pat-card::after{content:attr(data-sym);font-size:1.6rem;opacity:0;transition:.2s}
+.pat-card:hover:not(.matched):not(.flipped){border-color:var(--c);transform:scale(1.04)}
+.pat-card.flipped::after,.pat-card.matched::after{opacity:1}
+.pat-card.flipped{border-color:var(--c);background:rgba(0,212,255,.1)}
+.pat-card.matched{border-color:var(--g);background:rgba(0,255,136,.1);cursor:default;animation:match-pop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes match-pop{0%{transform:scale(.9)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+.pat-card.flipped:active{transform:scale(.96)}
+#pattern-info{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text);margin-bottom:.8rem}
+#pat-timer{color:var(--y);font-weight:700}
+#pat-pairs{color:var(--text)}
+/* ── TRACE GAME ── */
+#trace-wrap{width:100%;max-width:380px}
+#trace-grid{display:grid;gap:4px;margin-bottom:1rem;padding:6px;background:var(--panel2);border-radius:10px;border:1px solid var(--border)}
+.tr-cell{height:52px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;transition:.15s;border:2px solid transparent;user-select:none}
+.tr-cell.empty{background:rgba(30,48,64,.5)}
+.tr-cell.empty:hover{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3)}
+.tr-cell.start{background:rgba(0,255,136,.2);border-color:var(--g);color:var(--g)}
+.tr-cell.end{background:rgba(255,51,85,.2);border-color:var(--r);color:var(--r)}
+.tr-cell.wall{background:rgba(255,51,85,.08);border-color:rgba(255,51,85,.2);cursor:not-allowed;color:var(--r);opacity:.6}
+.tr-cell.path{background:rgba(0,212,255,.2);border-color:var(--c);color:var(--c)}
+.tr-cell.path:active{transform:scale(.95)}
+.tr-cell.active-path{background:rgba(0,212,255,.35);border-color:var(--c);box-shadow:0 0 10px rgba(0,212,255,.4)}
+#trace-info{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text);margin-bottom:.8rem}
+#trace-timer{color:var(--y);font-weight:700}
+#trace-instructions{font-size:.78rem;color:var(--text);text-align:center;margin-bottom:.8rem}
+/* ── OVERLAYS ── */
+.overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(8,11,18,.92);backdrop-filter:blur(6px)}
+.overlay.show{display:flex}
+.ov-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:2rem;width:90%;max-width:420px;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.ov-icon{font-size:3.5rem;text-align:center;margin-bottom:.75rem}
+.ov-title{font-size:1.5rem;font-weight:900;text-align:center;margin-bottom:.4rem}
+.ov-sub{font-size:.85rem;color:var(--text);text-align:center;margin-bottom:1.5rem;line-height:1.6}
+.rewards-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem}
+.reward-box{background:var(--panel2);border-radius:10px;padding:.9rem;text-align:center;border:1px solid var(--border)}
+.reward-box label{display:block;font-size:.6rem;color:var(--text);letter-spacing:.2em;margin-bottom:.3rem}
+.reward-box span{font-size:1.3rem;font-weight:900}
+.ov-buttons{display:flex;flex-direction:column;gap:.6rem}
+/* LEVEL UP */
+#ov-levelup .ov-title{color:var(--g);text-shadow:0 0 20px var(--g)}
+/* BRIEFING */
+.brief-steps{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem}
+.brief-step{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--text);padding:.5rem .75rem;background:var(--panel2);border-radius:8px}
+.brief-step-icon{font-size:1rem}
+/* ── NOTIFS ── */
+#notif-stack{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:.5rem;align-items:center;pointer-events:none;z-index:300}
+.notif{padding:.6rem 1.4rem;border-radius:30px;font-size:.82rem;font-weight:700;letter-spacing:.08em;animation:notif-in .3s cubic-bezier(.34,1.56,.64,1),notif-out .4s ease 2s forwards;white-space:nowrap}
+.notif-g{background:rgba(0,255,136,.15);color:var(--g);border:1px solid rgba(0,255,136,.3);box-shadow:0 0 20px rgba(0,255,136,.15)}
+.notif-r{background:rgba(255,51,85,.12);color:var(--r);border:1px solid rgba(255,51,85,.3)}
+.notif-y{background:rgba(255,215,0,.12);color:var(--y);border:1px solid rgba(255,215,0,.3)}
+.notif-c{background:rgba(0,212,255,.12);color:var(--c);border:1px solid rgba(0,212,255,.3)}
+@keyframes notif-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes notif-out{to{opacity:0;transform:translateY(-8px)}}
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .missions-grid{grid-template-columns:1fr}
+  .shop-grid{grid-template-columns:1fr}
+  .crack-slot{width:52px;height:62px;font-size:1.4rem}
+  .crack-hist-slot{width:40px;height:44px;font-size:1rem}
+  .mem-panel{height:100px}
+  .pat-card{height:62px}
+  .mc-name{font-size:.9rem}
+  .badge{font-size:.65rem;padding:.15rem .45rem;letter-spacing:.06em}
+}
+@media(max-width:360px){
+  .mc-name{font-size:.82rem}
+  .badge{font-size:.6rem;padding:.12rem .35rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-logo">HACKSIM</div>
+  <div class="hud-sep"></div>
+  <div class="hud-stat"><label>Level</label><span class="hud-lvl" id="h-lvl">1</span></div>
+  <div class="xp-wrap">
+    <label>XP <span id="h-xp-txt" style="color:var(--c)">0/100</span></label>
+    <div class="xp-track"><div class="xp-fill" id="h-xp" style="width:0%"></div></div>
+  </div>
+  <div class="hud-stat" style="display:none" id="h-rank-wrap"><label>Rank</label><div class="hud-rank" id="h-rank">NOVICE</div></div>
+  <div class="hud-stat"><label>Credits</label><span class="hud-cr" id="h-cr">$0</span></div>
+  <div class="hud-actions">
+    <button class="btn btn-sm btn-secondary" onclick="goShop()">🛒 SHOP</button>
+    <button class="btn btn-sm" id="snd-btn" onclick="toggleSound()" style="background:var(--panel2);color:var(--text);border:1.5px solid var(--border)">🔇</button>
+  </div>
+</div>
+
+<!-- START SCREEN -->
+<div class="screen active" id="s-start">
+  <div class="start-logo">HACKSIM</div>
+  <div class="start-tagline">THE HACKER EXPERIENCE</div>
+  <div class="start-save-info" id="save-info">
+    Returning hacker — Level <span id="si-lvl">1</span> &nbsp;·&nbsp; <span id="si-cr">$0</span> credits
+  </div>
+  <div class="start-btns">
+    <button class="btn btn-primary btn-lg" onclick="onPlay()">▶ &nbsp; PLAY</button>
+    <button class="btn btn-secondary" onclick="goShop(true)">🛒 &nbsp; TOOL SHOP</button>
+  </div>
+  <div class="start-footer">FICTIONAL SIMULATION — ENTERTAINMENT ONLY</div>
+</div>
+
+<!-- MISSIONS -->
+<div class="screen" id="s-missions">
+  <div class="missions-header">
+    <span class="missions-title">// Select Mission</span>
+    <button class="btn btn-sm btn-secondary" onclick="goShop()">🛒 Shop</button>
+  </div>
+  <div class="missions-grid" id="mission-grid"></div>
+</div>
+
+<!-- SHOP -->
+<div class="screen" id="s-shop">
+  <div class="missions-header">
+    <button class="btn btn-sm btn-secondary" onclick="goBack()" id="shop-back">← Back</button>
+    <span class="missions-title">// Tool Shop</span>
+    <span style="color:var(--y);font-weight:700" id="shop-cr-display">$0</span>
+  </div>
+  <div class="shop-grid" id="shop-grid"></div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="s-game">
+  <div id="game-context">
+    <button class="btn btn-sm btn-danger" style="flex-shrink:0;padding:.35rem .8rem;font-size:.75rem" onclick="if(confirm('Abort mission and go to menu?')){CUR_MISSION=null;goMissions();}">✕ ABORT</button>
+    <div style="flex:1;min-width:0">
+      <div id="gc-mission" style="margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Mission</div>
+      <div id="gc-step" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Step 1</div>
+    </div>
+    <div id="gc-steps-bar" style="flex-shrink:0"></div>
+  </div>
+  <div id="game-area">
+    <div id="game-title">Game Title</div>
+    <div id="game-instructions">Instructions here</div>
+    <div id="game-container"></div>
+  </div>
+</div>
+
+<!-- BRIEFING OVERLAY -->
+<div class="overlay" id="ov-brief">
+  <div class="ov-card">
+    <div class="ov-icon" id="brief-icon">🎯</div>
+    <div class="ov-title" id="brief-title" style="color:var(--c)">Mission Name</div>
+    <div class="ov-sub" id="brief-desc">Description</div>
+    <div class="brief-steps" id="brief-steps"></div>
+    <div class="rewards-grid">
+      <div class="reward-box"><label>XP REWARD</label><span style="color:var(--c)" id="brief-xp">+100</span></div>
+      <div class="reward-box"><label>CREDITS</label><span style="color:var(--y)" id="brief-cr">+$200</span></div>
+    </div>
+    <div class="ov-buttons">
+      <button class="btn btn-primary" onclick="acceptMission()">ACCEPT MISSION</button>
+      <button class="btn btn-danger" onclick="closeOv('ov-brief')">Decline</button>
+    </div>
+  </div>
+</div>
+
+<!-- VICTORY -->
+<div class="overlay" id="ov-victory">
+  <div class="ov-card">
+    <div class="ov-icon">✅</div>
+    <div class="ov-title" style="color:var(--g)">MISSION COMPLETE</div>
+    <div class="ov-sub" id="vic-sub">Access granted.</div>
+    <div class="rewards-grid">
+      <div class="reward-box"><label>XP GAINED</label><span style="color:var(--c)" id="vic-xp">+100</span></div>
+      <div class="reward-box"><label>CREDITS</label><span style="color:var(--y)" id="vic-cr">+$200</span></div>
+    </div>
+    <div id="vic-first" style="text-align:center;font-size:.8rem;color:var(--g);margin-bottom:1rem;display:none">🔓 First-clear bonus applied!</div>
+    <div class="ov-buttons">
+      <button class="btn btn-primary" onclick="afterVictory()">CONTINUE</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAILURE -->
+<div class="overlay" id="ov-fail">
+  <div class="ov-card">
+    <div class="ov-icon">❌</div>
+    <div class="ov-title" style="color:var(--r)">MISSION FAILED</div>
+    <div class="ov-sub" id="fail-msg">Connection traced. Try again.</div>
+    <div class="ov-buttons">
+      <button class="btn btn-primary" onclick="retryMission()">RETRY MISSION</button>
+      <button class="btn btn-danger" onclick="afterVictory()">ABORT</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL UP -->
+<div class="overlay" id="ov-levelup">
+  <div class="ov-card" style="text-align:center">
+    <div class="ov-icon" style="font-size:4rem">⚡</div>
+    <div class="ov-title">LEVEL UP!</div>
+    <div style="font-size:4rem;font-weight:900;color:var(--g);text-shadow:0 0 30px var(--g);margin:.5rem 0" id="lu-num">2</div>
+    <div style="font-size:1rem;color:var(--y);letter-spacing:.2em;margin-bottom:.5rem" id="lu-rank">SCRIPT KIDDIE</div>
+    <div class="ov-sub" id="lu-msg">New missions unlocked!</div>
+    <button class="btn btn-primary" style="width:100%" onclick="closeOv('ov-levelup')">AWESOME!</button>
+  </div>
+</div>
+
+<div id="notif-stack"></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════
+// AUDIO
+// ═══════════════════════════════
+let SND=false,AC=null;
+const audio=()=>{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC};
+const beep=(f,d,type='square',vol=.08)=>{if(!SND)return;try{
+  const a=audio(),o=a.createOscillator(),g=a.createGain();
+  o.connect(g);g.connect(a.destination);o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(vol,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+d);
+  o.start();o.stop(a.currentTime+d);}catch(e){}};
+const sfx={
+  click:()=>beep(600,.04,'square',.06),
+  hit:()=>beep(800,.06,'sine',.1),
+  miss:()=>beep(200,.15,'sawtooth',.1),
+  win:[500,700,900,1100].map((f,i)=>()=>setTimeout(()=>beep(f,.18,'sine',.12),i*70)),
+  success:()=>sfx.win.forEach(f=>f()),
+  fail:()=>{[400,300,200].forEach((f,i)=>setTimeout(()=>beep(f,.2,'sawtooth',.09),i*80))},
+  levelup:()=>{[400,500,600,800,1000,1200].forEach((f,i)=>setTimeout(()=>beep(f,.15,'sine',.13),i*60))},
+  unlock:()=>{[600,800,1000].forEach((f,i)=>setTimeout(()=>beep(f,.12,'sine',.1),i*70))},
+};
+const toggleSound=()=>{
+  SND=!SND;
+  document.getElementById('snd-btn').textContent=SND?'🔊':'🔇';
+  if(SND)sfx.click();save();
+};
+
+// ═══════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════
+const RANKS=['NOVICE','SCRIPT KIDDIE','GREY HAT','BLACK HAT','ELITE','GHOST','LEGEND'];
+const RANK_LVL=[1,4,7,11,15,20,28];
+const XP_TABLE=[0,100,250,450,700,1000,1400,1850,2400,3050,3800,4650,5600,6700,8000,9500,11200,13200,15500,18000];
+
+const GAME_TYPES={
+  crack:{name:'PASSWORD CRACKER',icon:'🔓',color:'var(--g)',instructions:'Guess the 4-digit code. Green = right place, Yellow = right digit wrong place.'},
+  bypass:{name:'SEQUENCE BYPASS',icon:'🔢',color:'var(--c)',instructions:'Click the numbers in order from 1 to the target. Be fast!'},
+  memory:{name:'MEMORY HACK',icon:'🧠',color:'var(--y)',instructions:'Watch the flashing pattern, then repeat it exactly. Don\'t make mistakes!'},
+  pattern:{name:'PATTERN BREACH',icon:'🔮',color:'var(--p)',instructions:'Find all matching pairs by flipping cards. Match them all to breach!'},
+  trace:{name:'NETWORK TRACE',icon:'🌐',color:'var(--o)',instructions:'Draw a path from START (green) to END (red). Avoid firewall walls (🔥). Click connected cells to route your signal.'},
+};
+
+const MISSIONS=[
+  {id:'m1',name:'Probe: Home Router',diff:'easy',desc:'A basic home router running default credentials. Perfect target for a beginner.',icon:'🏠',steps:['crack'],xp:80,cr:150,minLvl:1},
+  {id:'m2',name:'Scan: Coffee Shop WiFi',diff:'easy',desc:'Unsecured public WiFi. Identify active sessions and intercept packets.',icon:'☕',steps:['bypass'],xp:100,cr:180,minLvl:1},
+  {id:'m3',name:'Phish: Corporate Email',diff:'easy',desc:'A phishing-resistant email system. Crack the pattern to get past spam filters.',icon:'📧',steps:['pattern'],xp:120,cr:220,minLvl:1},
+  {id:'m4',name:'Hack: Legacy Database',diff:'med',desc:'An outdated SQL server protected by weak encryption. Crack the hash.',icon:'🗄️',steps:['crack','bypass'],xp:200,cr:400,minLvl:3},
+  {id:'m5',name:'Breach: IoT Network',diff:'med',desc:'Smart devices with predictable memory addresses. Exploit their vulnerability.',icon:'📡',steps:['memory','crack'],xp:250,cr:500,minLvl:3},
+  {id:'m6',name:'Infiltrate: Bank Portal',diff:'med',desc:'Two-factor authentication bypassed through a sequence injection attack.',icon:'🏦',steps:['bypass','pattern'],xp:300,cr:650,minLvl:5},
+  {id:'m7',name:'Ghost: Gov Intranet',diff:'hard',desc:'Government intranet with layered defenses. Use all your skills to get in.',icon:'🏛️',steps:['memory','crack','bypass'],xp:450,cr:1000,minLvl:7},
+  {id:'m8',name:'Trace: Dark Web Route',diff:'hard',desc:'Navigate the dark web\'s encrypted relay nodes without triggering tripwires.',icon:'🕸️',steps:['trace','crack'],xp:500,cr:1200,minLvl:7},
+  {id:'m9',name:'Zero-Day: Satellite Net',diff:'expert',desc:'An unpatched satellite firmware exploit. The most complex operation you\'ll run.',icon:'🛰️',steps:['trace','memory','crack','bypass'],xp:900,cr:2500,minLvl:12},
+  {id:'m10',name:'Phantom: Quantum Server',diff:'expert',desc:'The ultimate target. A quantum-encrypted supercomputer. Can you crack it?',icon:'💎',steps:['pattern','trace','memory','crack'],xp:1200,cr:4000,minLvl:16},
+];
+
+const TOOLS=[
+  {id:'vpn',name:'VPN Shield',icon:'🛡️',desc:'+1 extra attempt in all password crack games.',cost:300,effect:'crack_extra_life'},
+  {id:'dict',name:'Dictionary Pack',icon:'📖',desc:'Reveals one digit in crack games at start.',cost:500,effect:'crack_hint'},
+  {id:'timer',name:'Time Extender',icon:'⏱',desc:'+30% more time in bypass and memory games.',cost:600,effect:'time_bonus'},
+  {id:'scanner',name:'Pattern Scanner',icon:'🔍',desc:'Shows 2 matching pairs briefly at start of pattern games.',cost:700,effect:'pattern_hint'},
+  {id:'router',name:'Ghost Router',icon:'👻',desc:'One free retry on any failed mini-game per mission.',cost:1000,effect:'free_retry'},
+  {id:'ai',name:'AI Assistant',icon:'🤖',desc:'Auto-solves one mini-game per mission (once).',cost:2000,effect:'auto_solve'},
+  {id:'quantum',name:'Quantum Chip',icon:'⚛️',desc:'Doubles all XP earned from missions.',cost:3500,effect:'xp_double'},
+];
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let P={lvl:1,xp:0,cr:0,done:new Set(),tools:new Set(),total:0};
+let SND_ON=false;
+let CUR_MISSION=null;// current mission object
+let CUR_STEP=0;// step index in mission
+let PREV_SCREEN='s-start';
+let FREE_RETRY=false;// ghost router
+let AI_AVAIL=false;// ai assistant
+let MISSION_START=0;
+
+// ═══════════════════════════════
+// SAVE/LOAD
+// ═══════════════════════════════
+const save=()=>localStorage.setItem('hs3',JSON.stringify({
+  lvl:P.lvl,xp:P.xp,cr:P.cr,done:[...P.done],tools:[...P.tools],total:P.total,snd:SND
+}));
+const load=()=>{
+  try{
+    const d=JSON.parse(localStorage.getItem('hs3'));if(!d)return false;
+    P.lvl=d.lvl||1;P.xp=d.xp||0;P.cr=d.cr||0;
+    P.done=new Set(d.done||[]);P.tools=new Set(d.tools||[]);P.total=d.total||0;
+    SND=d.snd||false;document.getElementById('snd-btn').textContent=SND?'🔊':'🔇';
+    return true;
+  }catch(e){return false;}
+};
+
+// ═══════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════
+const showScreen=(id,hudVisible=true)=>{
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('hud').classList.toggle('show',hudVisible);
+  if(hudVisible)refreshHUD();
+};
+const openOv=id=>document.getElementById(id).classList.add('show');
+const closeOv=id=>document.getElementById(id).classList.remove('show');
+const goBack=()=>showScreen(PREV_SCREEN);
+const goShop=(fromStart=false)=>{
+  PREV_SCREEN=fromStart?'s-start':'s-missions';
+  renderShop();showScreen('s-shop');
+};
+const goMissions=()=>{renderMissions();showScreen('s-missions');};
+const onPlay=()=>{sfx.click();goMissions();};
+
+// ═══════════════════════════════
+// HUD
+// ═══════════════════════════════
+const getRank=()=>RANKS[RANK_LVL.slice().reverse().findIndex(l=>P.lvl>=l.valueOf())===-1?0:RANK_LVL.length-1-RANK_LVL.slice().reverse().findIndex(l=>P.lvl>=l)];
+const getXpReq=lvl=>XP_TABLE[Math.min(lvl,XP_TABLE.length-1)];
+const refreshHUD=()=>{
+  document.getElementById('h-lvl').textContent=P.lvl;
+  document.getElementById('h-cr').textContent='$'+P.cr;
+  document.getElementById('h-rank').textContent=getRank();
+  document.getElementById('h-rank-wrap').style.display=P.lvl>=3?'flex':'none';
+  const prevXP=XP_TABLE[P.lvl-1]||0;
+  const nextXP=getXpReq(P.lvl);
+  const pct=Math.min(100,Math.round((P.xp-prevXP)/(nextXP-prevXP)*100));
+  document.getElementById('h-xp').style.width=pct+'%';
+  document.getElementById('h-xp-txt').textContent=P.xp+'/'+nextXP;
+  document.getElementById('shop-cr-display').textContent='$'+P.cr;
+};
+const notify=(msg,type='g')=>{
+  const c=document.getElementById('notif-stack');
+  const d=document.createElement('div');d.className=`notif notif-${type}`;d.textContent=msg;
+  c.appendChild(d);setTimeout(()=>d.remove(),2600);
+};
+
+// ═══════════════════════════════
+// MISSIONS
+// ═══════════════════════════════
+const renderMissions=()=>{
+  const grid=document.getElementById('mission-grid');grid.innerHTML='';
+  MISSIONS.forEach(m=>{
+    const avail=P.lvl>=m.minLvl;const done=P.done.has(m.id);
+    const card=document.createElement('div');
+    card.className=`mission-card ${m.diff}${!avail?' locked':''}${done?' done':''}`;
+    card.innerHTML=`
+      <div class="mc-top">
+        <div>
+          <div style="margin-bottom:.35rem"><span class="badge badge-${m.diff}">${m.diff.toUpperCase()}</span></div>
+          <div class="mc-name">${m.icon} ${m.name}</div>
+        </div>
+        ${done?'<div class="mc-done-mark">✓</div>':''}
+      </div>
+      <div class="mc-desc">${m.desc}</div>
+      <div class="mc-footer">
+        <div class="mc-rewards"><span class="mc-xp">⚡ ${m.xp} XP</span><span class="mc-cr">💰 $${m.cr}</span></div>
+        <span class="mc-req">${m.steps.length} step${m.steps.length>1?'s':''}</span>
+      </div>
+      ${!avail?`<div class="mc-lock">🔒 LEVEL ${m.minLvl} REQUIRED</div>`:''}
+    `;
+    if(avail)card.onclick=()=>openBriefing(m);
+    grid.appendChild(card);
+  });
+};
+
+// ═══════════════════════════════
+// BRIEFING
+// ═══════════════════════════════
+let pendingMission=null;
+const openBriefing=m=>{
+  sfx.click();pendingMission=m;
+  document.getElementById('brief-icon').textContent=m.icon;
+  document.getElementById('brief-title').textContent=m.name;
+  document.getElementById('brief-desc').textContent=m.desc;
+  const mult=P.tools.has('quantum')?2:1;
+  document.getElementById('brief-xp').textContent='+'+m.xp*mult+' XP';
+  document.getElementById('brief-cr').textContent='+$'+m.cr;
+  const sl=document.getElementById('brief-steps');sl.innerHTML='';
+  m.steps.forEach((s,i)=>{
+    const gt=GAME_TYPES[s];
+    sl.innerHTML+=`<div class="brief-step"><span class="brief-step-icon">${gt.icon}</span>Step ${i+1}: ${gt.name}</div>`;
+  });
+  openOv('ov-brief');
+};
+const acceptMission=()=>{
+  closeOv('ov-brief');sfx.unlock();
+  startMission(pendingMission);
+};
+
+// ═══════════════════════════════
+// MISSION ENGINE
+// ═══════════════════════════════
+const startMission=m=>{
+  CUR_MISSION=m;CUR_STEP=0;MISSION_START=Date.now();
+  FREE_RETRY=P.tools.has('router');
+  AI_AVAIL=P.tools.has('ai');
+  showScreen('s-game');
+  updateGameContext();
+  startStep();
+};
+const updateGameContext=()=>{
+  const m=CUR_MISSION;
+  document.getElementById('gc-mission').textContent=m.icon+' '+m.name;
+  document.getElementById('gc-step').textContent=`Step ${CUR_STEP+1} of ${m.steps.length}: ${GAME_TYPES[m.steps[CUR_STEP]].name}`;
+  const bar=document.getElementById('gc-steps-bar');bar.innerHTML='';
+  m.steps.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='step-dot'+(i<CUR_STEP?' done':i===CUR_STEP?' active':'');
+    bar.appendChild(d);
+  });
+};
+const startStep=()=>{
+  const type=CUR_MISSION.steps[CUR_STEP];
+  const diff=CUR_MISSION.diff;
+  const area=document.getElementById('game-container');area.innerHTML='';
+  const gt=GAME_TYPES[type];
+  document.getElementById('game-title').innerHTML=`${gt.icon} ${gt.name}`;
+  document.getElementById('game-title').style.color=gt.color;
+  document.getElementById('game-instructions').textContent=gt.instructions;
+  updateGameContext();
+  switch(type){
+    case 'crack': startCrack(diff);break;
+    case 'bypass': startBypass(diff);break;
+    case 'memory': startMemory(diff);break;
+    case 'pattern': startPattern(diff);break;
+    case 'trace': startTrace(diff);break;
+  }
+};
+// Stop all running game timers before transitioning
+const clearAllTimers=()=>{
+  clearInterval(byp.timer);clearInterval(pat.timer);clearInterval(tr.timer);
+  byp.timer=null;pat.timer=null;tr.timer=null;
+};
+const stepWin=()=>{
+  clearAllTimers();
+  sfx.success();
+  CUR_STEP++;
+  if(CUR_STEP>=CUR_MISSION.steps.length){
+    setTimeout(missionWin,500);
+  } else {
+    notify('Step complete! ✓','g');
+    setTimeout(startStep,700);
+  }
+};
+const stepFail=(msg='Connection traced.')=>{
+  clearAllTimers();
+  sfx.fail();
+  if(FREE_RETRY){
+    FREE_RETRY=false;notify('Ghost Router: Auto-retry activated!','c');
+    setTimeout(startStep,800);return;
+  }
+  document.getElementById('fail-msg').textContent=msg;
+  setTimeout(()=>openOv('ov-fail'),400);
+};
+const retryMission=()=>{closeOv('ov-fail');CUR_STEP=0;FREE_RETRY=P.tools.has('router');startStep();};
+let _autoNavTimer=null;
+const missionWin=()=>{
+  clearAllTimers();
+  const m=CUR_MISSION;if(!m)return;
+  const isNew=!P.done.has(m.id);
+  const mult=P.tools.has('quantum')?2:1;
+  const xpGain=isNew?m.xp*mult:Math.floor(m.xp*.3*mult);
+  const crGain=isNew?m.cr:Math.floor(m.cr*.3);
+  if(isNew)P.done.add(m.id);
+  const prevLvl=P.lvl;
+  P.xp+=xpGain;P.cr+=crGain;P.total++;
+  while(P.lvl<XP_TABLE.length-1&&P.xp>=XP_TABLE[P.lvl])P.lvl++;
+  document.getElementById('vic-xp').textContent='+'+xpGain+' XP';
+  document.getElementById('vic-cr').textContent='+$'+crGain;
+  document.getElementById('vic-sub').textContent=isNew?'Target compromised. Data secured.':'Replay bonus: 30% reward.';
+  document.getElementById('vic-first').style.display=isNew?'block':'none';
+  // Countdown on the CONTINUE button
+  const btn=document.querySelector('#ov-victory .btn-primary');
+  let cd=4;
+  if(btn)btn.textContent=`CONTINUE  (${cd})`;
+  openOv('ov-victory');refreshHUD();save();
+  // Auto-navigate after 4 seconds so user is never stuck
+  clearTimeout(_autoNavTimer);
+  const iv=setInterval(()=>{
+    cd--;
+    if(btn)btn.textContent=cd>0?`CONTINUE  (${cd})`:'CONTINUE';
+    if(cd<=0){clearInterval(iv);afterVictory();}
+  },1000);
+  _autoNavTimer=iv;
+  if(P.lvl>prevLvl){
+    document.getElementById('lu-num').textContent=P.lvl;
+    document.getElementById('lu-rank').textContent=getRank();
+    const newMs=MISSIONS.filter(m2=>m2.minLvl<=P.lvl&&m2.minLvl>prevLvl);
+    document.getElementById('lu-msg').textContent=newMs.length?`${newMs.length} new mission${newMs.length>1?'s':''} unlocked!`:'Keep hacking!';
+    setTimeout(()=>{closeOv('ov-victory');clearInterval(iv);openOv('ov-levelup');sfx.levelup();},1800);
+  }
+};
+const afterVictory=()=>{
+  clearTimeout(_autoNavTimer);clearInterval(_autoNavTimer);
+  closeOv('ov-victory');closeOv('ov-fail');closeOv('ov-levelup');
+  CUR_MISSION=null;CUR_STEP=0;
+  goMissions();
+};
+
+// ═══════════════════════════════════════════════
+// GAME 1: CRACK (Mastermind)
+// ═══════════════════════════════════════════════
+let crk={secret:[],cur:[],attempts:0,maxAtt:6,solved:false};
+const CRACK_DIGITS='0123456789';
+const startCrack=(diff)=>{
+  const len=4;
+  const maxAtt=diff==='easy'?7:diff==='med'?6:diff==='hard'?5:4;
+  crk.secret=Array.from({length:len},()=>CRACK_DIGITS[~~(Math.random()*10)]);
+  crk.cur=['','','',''];crk.attempts=0;crk.maxAtt=maxAtt+(P.tools.has('vpn')?1:0);crk.solved=false;
+  const area=document.getElementById('game-container');
+  area.innerHTML=`<div id="crack-wrap">
+    <div id="crack-slots"></div>
+    <div id="crack-attempts">Attempts: 0 / ${crk.maxAtt}</div>
+    <div id="crack-hint-msg" style="color:var(--text)">Enter your first guess.</div>
+    <div id="crack-history"></div>
+    <div id="crack-keypad"></div>
+  </div>`;
+  if(P.tools.has('dict')){
+    const ri=~~(Math.random()*4);
+    crk.cur=new Array(4).fill('');crk.cur[ri]=crk.secret[ri];
+    notify(`Dictionary hint: position ${ri+1} = ${crk.secret[ri]}`,'c');
+  }
+  renderCrackSlots();renderCrackKeypad();
+};
+const renderCrackSlots=()=>{
+  const el=document.getElementById('crack-slots');if(!el)return;
+  el.innerHTML='';
+  for(let i=0;i<4;i++){
+    const d=document.createElement('div');
+    d.className='crack-slot'+(crk.cur[i]?' filled':'')+(i===crk.cur.filter(x=>x).length&&!crk.cur[i]?' active':'');
+    d.textContent=crk.cur[i]||'';el.appendChild(d);
+  }
+};
+const renderCrackKeypad=()=>{
+  const el=document.getElementById('crack-keypad');if(!el)return;
+  el.innerHTML='';
+  for(const d of '0123456789'){
+    const b=document.createElement('button');b.className='crack-key';b.textContent=d;
+    b.onclick=()=>crackType(d);el.appendChild(b);
+  }
+  const bs=document.createElement('button');bs.className='crack-key bs';bs.textContent='⌫';bs.onclick=crackBS;el.appendChild(bs);
+  const en=document.createElement('button');en.className='crack-key enter';en.textContent='ENTER';en.onclick=crackSubmit;
+  en.style.cssText='grid-column:span 3;background:rgba(0,255,136,.08);border-color:rgba(0,255,136,.3);color:var(--g)';
+  el.appendChild(en);
+};
+const crackType=d=>{
+  if(crk.solved)return;
+  const idx=crk.cur.findIndex(x=>!x);
+  if(idx===-1)return;
+  crk.cur[idx]=d;sfx.click();renderCrackSlots();
+};
+const crackBS=()=>{
+  if(crk.solved)return;
+  const last=crk.cur.map((v,i)=>[v,i]).filter(([v])=>v).pop();
+  if(!last)return;crk.cur[last[1]]='';sfx.click();renderCrackSlots();
+};
+const crackSubmit=()=>{
+  if(crk.solved)return;
+  const filled=crk.cur.filter(Boolean);
+  if(filled.length<4){
+    const hint=document.getElementById('crack-hint-msg');
+    if(hint){hint.textContent='Enter all 4 digits first!';hint.style.color='var(--r)';}return;
+  }
+  crk.attempts++;
+  const guess=[...crk.cur];
+  const result=scoreCrack(guess,crk.secret);
+  addCrackRow(guess,result);
+  crk.cur=['','','',''];renderCrackSlots();
+  const at=document.getElementById('crack-attempts');
+  if(at)at.textContent=`Attempts: ${crk.attempts} / ${crk.maxAtt}`;
+  const hm=document.getElementById('crack-hint-msg');
+  if(result.hits===4){
+    crk.solved=true;if(hm){hm.textContent='CODE CRACKED!';hm.style.color='var(--g)';}
+    sfx.hit();setTimeout(stepWin,700);return;
+  }
+  if(crk.attempts>=crk.maxAtt){
+    if(hm){hm.textContent=`Failed! Code was: ${crk.secret.join('')}`;hm.style.color='var(--r)';}
+    setTimeout(()=>stepFail('Password cracking failed — target alerted.'),700);return;
+  }
+  if(hm){hm.textContent=`${result.hits} right place · ${result.close} right digit`;hm.style.color=result.hits>0?'var(--g)':'var(--y)';}
+};
+const scoreCrack=(guess,secret)=>{
+  let hits=0,close=0;const sg=[...secret],sc=[...guess];
+  for(let i=0;i<4;i++)if(guess[i]===secret[i]){hits++;sg[i]=sc[i]=null;}
+  for(let i=0;i<4;i++){if(!sc[i])continue;const j=sg.indexOf(sc[i]);if(j>=0){close++;sg[j]=null;}}
+  return{hits,close};
+};
+const addCrackRow=(guess,result)=>{
+  const hist=document.getElementById('crack-history');if(!hist)return;
+  const row=document.createElement('div');row.className='crack-row';
+  let html='';
+  guess.forEach((g,i)=>{
+    const isHit=crk.secret[i]===g&&result.hits>0;
+    const isClose=!isHit&&crk.secret.includes(g)&&result.close>0;
+    html+=`<div class="crack-hist-slot ${isHit?'slot-hit':isClose?'slot-close':'slot-miss'}">${g}</div>`;
+  });
+  const dots=
+    Array(result.hits).fill('<div class="cdot cdot-hit"></div>').join('')+
+    Array(result.close).fill('<div class="cdot cdot-close"></div>').join('')+
+    Array(4-result.hits-result.close).fill('<div class="cdot cdot-miss"></div>').join('');
+  html+=`<div class="crack-row-dots">${dots}</div>`;
+  row.innerHTML=html;hist.appendChild(row);hist.scrollTop=hist.scrollHeight;
+};
+
+// ═══════════════════════════════════════════════
+// GAME 2: BYPASS (Number sequence)
+// ═══════════════════════════════════════════════
+let byp={numbers:[],target:0,next:1,timer:null,timeLeft:0};
+const startBypass=(diff)=>{
+  const count=diff==='easy'?9:diff==='med'?12:diff==='hard'?16:20;
+  const time=diff==='easy'?25:diff==='med'?20:diff==='hard'?18:15;
+  const adjTime=P.tools.has('timer')?Math.round(time*1.3):time;
+  byp.target=count;byp.next=1;byp.timeLeft=adjTime;
+  const area=document.getElementById('game-container');
+  area.innerHTML=`<div id="bypass-wrap">
+    <div id="bypass-info">
+      <span id="bypass-target">Click 1 → ${count}</span>
+      <div id="bypass-timer-wrap"><span style="font-size:.7rem;color:var(--text)">TIME&nbsp;</span><span id="bypass-timer">${adjTime}</span></div>
+    </div>
+    <div id="bypass-progress-bar"><div id="bypass-progress-fill" style="width:0%"></div></div>
+    <div id="bypass-grid" style="grid-template-columns:repeat(${Math.ceil(Math.sqrt(count))},1fr)"></div>
+  </div>`;
+  const nums=Array.from({length:count},(_,i)=>i+1).sort(()=>Math.random()-.5);
+  byp.numbers=[...nums];
+  const grid=document.getElementById('bypass-grid');
+  nums.forEach(n=>{
+    const c=document.createElement('div');c.className='bypass-cell';c.textContent=n;c.id=`bc-${n}`;
+    c.onclick=()=>bypClick(n,c);grid.appendChild(c);
+  });
+  clearInterval(byp.timer);
+  byp.timer=setInterval(()=>{
+    byp.timeLeft--;
+    const el=document.getElementById('bypass-timer');if(el)el.textContent=byp.timeLeft;
+    if(byp.timeLeft<=5&&el)el.style.color='var(--r)';
+    if(byp.timeLeft<=0){clearInterval(byp.timer);stepFail('Time expired — sequence lock engaged.');}
+  },1000);
+};
+const bypClick=(n,cell)=>{
+  if(n===byp.next){
+    cell.classList.add('correct','used');sfx.hit();byp.next++;
+    const pct=(byp.next-1)/byp.target*100;
+    const pf=document.getElementById('bypass-progress-fill');if(pf)pf.style.width=pct+'%';
+    if(byp.next>byp.target){clearInterval(byp.timer);setTimeout(stepWin,400);}
+  } else {
+    cell.classList.add('wrong');sfx.miss();
+    setTimeout(()=>cell.classList.remove('wrong'),300);
+  }
+};
+
+// ═══════════════════════════════════════════════
+// GAME 3: MEMORY (Simon Says)
+// ═══════════════════════════════════════════════
+const MEM_COLORS=[
+  {id:'r',cls:'mp-red',icon:'🔴',label:'RED'},
+  {id:'b',cls:'mp-blue',icon:'🔵',label:'BLUE'},
+  {id:'g',cls:'mp-green',icon:'🟢',label:'GREEN'},
+  {id:'y',cls:'mp-yellow',icon:'🟡',label:'YELLOW'},
+];
+let mem={sequence:[],playerIdx:0,round:1,maxRounds:3,phase:'show',seqLen:3,canClick:false};
+const startMemory=(diff)=>{
+  const rounds=diff==='easy'?3:diff==='med'?4:diff==='hard'?5:6;
+  const baseLen=diff==='easy'?3:diff==='med'?4:5;
+  mem={sequence:[],playerIdx:0,round:1,maxRounds:rounds,phase:'show',seqLen:baseLen,canClick:false};
+  const area=document.getElementById('game-container');
+  area.innerHTML=`<div id="memory-wrap">
+    <div id="memory-info">
+      <span id="mem-phase" style="color:var(--c)">Watch the sequence...</span>
+      <div class="mem-round-dots">${Array.from({length:rounds},(_,i)=>`<div class="mrd${i===0?' active':''}" id="mrd-${i}"></div>`).join('')}</div>
+    </div>
+    <div id="memory-seq-display"><div id="memory-seq-fill" style="width:0%"></div></div>
+    <div id="memory-panels">
+      ${MEM_COLORS.map(c=>`<div class="mem-panel ${c.cls}" id="mp-${c.id}" data-color="${c.id}">${c.icon}</div>`).join('')}
+    </div>
+    <div id="mem-status" style="text-align:center;font-size:.82rem;color:var(--text);min-height:20px"></div>
+  </div>`;
+  MEM_COLORS.forEach(c=>document.getElementById(`mp-${c.id}`).onclick=()=>memClick(c.id));
+  setTimeout(memNextRound,400);
+};
+const memNextRound=()=>{
+  const addCount=Math.max(1,mem.round);
+  for(let i=0;i<addCount;i++)mem.sequence.push(MEM_COLORS[~~(Math.random()*4)].id);
+  mem.playerIdx=0;mem.phase='show';mem.canClick=false;
+  const ph=document.getElementById('mem-phase');if(ph){ph.textContent='Watch carefully...';ph.style.color='var(--c)';}
+  showMemSeq();
+};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const showMemSeq=async()=>{
+  const delay=mem.round<=2?700:mem.round<=4?600:500;
+  for(let i=0;i<mem.sequence.length;i++){
+    const id=mem.sequence[i];const el=document.getElementById(`mp-${id}`);
+    if(!el)return;
+    await sleep(200);
+    el.classList.add('lit');sfx.click();
+    const fill=document.getElementById('memory-seq-fill');
+    if(fill)fill.style.width=((i+1)/mem.sequence.length*100)+'%';
+    await sleep(delay);
+    el.classList.remove('lit');
+    await sleep(100);
+  }
+  await sleep(300);
+  mem.phase='input';mem.canClick=true;
+  const ph=document.getElementById('mem-phase');if(ph){ph.textContent='Your turn! Repeat the sequence.';ph.style.color='var(--g)';}
+  MEM_COLORS.forEach(c=>{const el=document.getElementById(`mp-${c.id}`);if(el)el.classList.add('clickable');});
+};
+const memClick=id=>{
+  if(!mem.canClick)return;sfx.click();
+  const el=document.getElementById(`mp-${id}`);
+  if(el)el.classList.add('lit');
+  setTimeout(()=>{const e2=document.getElementById(`mp-${id}`);if(e2)e2.classList.remove('lit');},250);
+  if(id===mem.sequence[mem.playerIdx]){
+    mem.playerIdx++;
+    if(mem.playerIdx>=mem.sequence.length){
+      mem.canClick=false;MEM_COLORS.forEach(c=>{const el=document.getElementById(`mp-${c.id}`);if(el)el.classList.remove('clickable');});
+      const dot=document.getElementById(`mrd-${mem.round-1}`);if(dot)dot.classList.add('done');
+      if(mem.round>=mem.maxRounds){setTimeout(stepWin,500);}
+      else{
+        mem.round++;
+        const nd=document.getElementById(`mrd-${mem.round-1}`);if(nd){nd.classList.remove('active');nd.classList.add('active');}
+        const ph=document.getElementById('mem-phase');if(ph){ph.textContent='Round complete! Get ready...';ph.style.color='var(--g)';}
+        setTimeout(memNextRound,1000);
+      }
+    }
+  } else {
+    if(el)el.classList.add('wrong');mem.canClick=false;
+    setTimeout(()=>{
+      if(el)el.classList.remove('wrong');
+      stepFail('Memory sequence incorrect — intrusion detected.');
+    },500);
+  }
+};
+
+// ═══════════════════════════════════════════════
+// GAME 4: PATTERN (Matching Pairs)
+// ═══════════════════════════════════════════════
+const PAT_SYMS=['🔑','💻','🛡️','🔐','📡','⚡','🌐','💾'];
+let pat={cards:[],flipped:[],matched:0,total:8,locked:false,timer:null,timeLeft:0};
+const startPattern=(diff)=>{
+  const time=diff==='easy'?60:diff==='med'?50:diff==='hard'?40:30;
+  const adjTime=P.tools.has('timer')?Math.round(time*1.3):time;
+  const syms=[...PAT_SYMS].sort(()=>Math.random()-.5).slice(0,8);
+  const pairs=[...syms,...syms].sort(()=>Math.random()-.5);
+  pat={cards:pairs,flipped:[],matched:0,total:8,locked:false,timeLeft:adjTime,timer:null};
+  const area=document.getElementById('game-container');
+  area.innerHTML=`<div id="pattern-wrap">
+    <div id="pattern-info">
+      <span id="pat-pairs">Pairs: 0 / 8</span>
+      <span id="pat-timer">${adjTime}s</span>
+    </div>
+    <div id="pattern-grid"></div>
+  </div>`;
+  const grid=document.getElementById('pattern-grid');
+  pairs.forEach((sym,i)=>{
+    const c=document.createElement('div');c.className='pat-card';c.dataset.sym=sym;c.dataset.idx=i;
+    c.onclick=()=>patClick(i,c);grid.appendChild(c);
+  });
+  if(P.tools.has('scanner')){
+    // Briefly reveal 2 pairs
+    const seen=new Map();const hints=[];
+    pairs.forEach((s,i)=>{if(seen.has(s))hints.push([seen.get(s),i]);else seen.set(s,i);});
+    const h=hints.slice(0,2);
+    h.forEach(([a,b])=>{
+      const ca=grid.children[a],cb=grid.children[b];
+      ca.classList.add('flipped');cb.classList.add('flipped');
+    });
+    setTimeout(()=>{h.forEach(([a,b])=>{
+      const ca=grid.children[a],cb=grid.children[b];
+      if(!ca.classList.contains('matched'))ca.classList.remove('flipped');
+      if(!cb.classList.contains('matched'))cb.classList.remove('flipped');
+    });},1800);
+    notify('Pattern Scanner: 2 pairs revealed briefly!','c');
+  }
+  pat.timer=setInterval(()=>{
+    pat.timeLeft--;const el=document.getElementById('pat-timer');
+    if(el){el.textContent=pat.timeLeft+'s';if(pat.timeLeft<=10)el.style.color='var(--r)';}
+    if(pat.timeLeft<=0){clearInterval(pat.timer);stepFail('Time expired — data pattern locked.');}
+  },1000);
+};
+const patClick=(idx,card)=>{
+  if(pat.locked||card.classList.contains('matched')||card.classList.contains('flipped'))return;
+  card.classList.add('flipped');pat.flipped.push({idx,card,sym:pat.cards[idx]});sfx.click();
+  if(pat.flipped.length<2)return;
+  pat.locked=true;
+  const [a,b]=pat.flipped;
+  if(a.sym===b.sym){
+    a.card.classList.add('matched');b.card.classList.add('matched');sfx.hit();
+    pat.matched++;const pp=document.getElementById('pat-pairs');if(pp)pp.textContent=`Pairs: ${pat.matched} / 8`;
+    pat.flipped=[];pat.locked=false;
+    if(pat.matched>=8){clearInterval(pat.timer);setTimeout(stepWin,400);}
+  } else {
+    sfx.miss();
+    setTimeout(()=>{a.card.classList.remove('flipped');b.card.classList.remove('flipped');pat.flipped=[];pat.locked=false;},700);
+  }
+};
+
+// ═══════════════════════════════════════════════
+// GAME 5: TRACE (Network path)
+// ═══════════════════════════════════════════════
+let tr={grid:[],size:5,path:new Set(),timer:null,timeLeft:0,drawing:false};
+const startTrace=(diff)=>{
+  const sz=diff==='easy'?4:diff==='med'?5:diff==='hard'?5:6;
+  const walls=diff==='easy'?3:diff==='med'?5:diff==='hard'?7:10;
+  const time=diff==='easy'?40:diff==='med'?35:diff==='hard'?30:25;
+  const adjTime=P.tools.has('timer')?Math.round(time*1.3):time;
+  tr.size=sz;tr.path=new Set();tr.timeLeft=adjTime;
+  // Build grid: 0=empty,1=wall,2=start,3=end
+  tr.grid=Array.from({length:sz},()=>Array(sz).fill(0));
+  tr.grid[0][0]=2;tr.grid[sz-1][sz-1]=3;
+  // Ensure a valid path exists first, then add walls away from optimal path
+  const blocked=new Set(['0,0',`${sz-1},${sz-1}`]);
+  let placed=0;
+  while(placed<walls){
+    const r=~~(Math.random()*sz),c=~~(Math.random()*sz);
+    const k=`${r},${c}`;
+    // Don't block the main diagonal too much
+    if(!blocked.has(k)&&!(r===0&&c===0)&&!(r===sz-1&&c===sz-1)&&tr.grid[r][c]===0){
+      tr.grid[r][c]=1;
+      if(pathExists(tr.grid,sz)){blocked.add(k);placed++;}
+      else tr.grid[r][c]=0;
+    }
+  }
+  const area=document.getElementById('game-container');
+  area.innerHTML=`<div id="trace-wrap">
+    <div id="trace-info">
+      <span style="color:var(--text);font-size:.78rem">🟢 START → 🔴 END</span>
+      <span id="trace-timer" style="color:var(--y);font-weight:700">${adjTime}s</span>
+    </div>
+    <div id="trace-instructions" style="font-size:.75rem;color:var(--text);text-align:center;margin-bottom:.6rem">Click cells to draw your path. Click START to begin. 🔥 = firewall</div>
+    <div id="trace-grid" style="grid-template-columns:repeat(${sz},1fr)"></div>
+    <div style="display:flex;gap:.6rem;margin-top:.8rem;justify-content:center">
+      <button class="btn btn-sm btn-secondary" onclick="trClear()">Clear Path</button>
+      <button class="btn btn-sm btn-primary" onclick="trSubmit()">SUBMIT PATH</button>
+    </div>
+  </div>`;
+  const grid=document.getElementById('trace-grid');
+  for(let r=0;r<sz;r++)for(let c=0;c<sz;c++){
+    const cell=document.createElement('div');
+    const v=tr.grid[r][c];
+    cell.className='tr-cell '+(v===0?'empty':v===1?'wall':v===2?'start':'end');
+    cell.textContent=v===1?'🔥':v===2?'S':v===3?'E':'';
+    cell.dataset.r=r;cell.dataset.c=c;cell.id=`tc-${r}-${c}`;
+    if(v!==1)cell.onclick=()=>trToggle(r,c,cell);
+    grid.appendChild(cell);
+  }
+  tr.timer=setInterval(()=>{
+    tr.timeLeft--;const el=document.getElementById('trace-timer');
+    if(el){el.textContent=tr.timeLeft+'s';if(tr.timeLeft<=10)el.style.color='var(--r)';}
+    if(tr.timeLeft<=0){clearInterval(tr.timer);stepFail('Trace timeout — firewall engaged.');}
+  },1000);
+};
+const pathExists=(grid,sz)=>{
+  // BFS to check if 0,0 can reach sz-1,sz-1
+  const visited=new Set();const q=[[0,0]];
+  while(q.length){
+    const [r,c]=q.shift();const k=`${r},${c}`;
+    if(visited.has(k))continue;visited.add(k);
+    if(r===sz-1&&c===sz-1)return true;
+    [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc])=>{
+      if(nr>=0&&nr<sz&&nc>=0&&nc<sz&&grid[nr][nc]!==1)q.push([nr,nc]);
+    });
+  }
+  return false;
+};
+const trToggle=(r,c,cell)=>{
+  const k=`${r},${c}`;const v=tr.grid[r][c];
+  if(v===2||v===3){// start/end always in path
+    if(tr.path.has(k)){tr.path.delete(k);if(v!==2&&v!==3)cell.classList.remove('active-path','path');}
+    else{tr.path.add(k);cell.classList.add('active-path');}
+    return;
+  }
+  if(tr.path.has(k)){tr.path.delete(k);cell.classList.remove('path','active-path');}
+  else{tr.path.add(k);cell.classList.add('path');sfx.click();}
+};
+const trClear=()=>{
+  tr.path=new Set();
+  document.querySelectorAll('.tr-cell.path,.tr-cell.active-path').forEach(c=>{c.classList.remove('path','active-path');});
+};
+const trSubmit=()=>{
+  const sz=tr.size;
+  // Check path includes start and end
+  if(!tr.path.has('0,0')||!tr.path.has(`${sz-1},${sz-1}`)){
+    notify('Path must include START and END!','r');return;
+  }
+  // Check path is connected (each cell adjacent to next)
+  const pathArr=[...tr.path].map(k=>k.split(',').map(Number));
+  // BFS through path cells only
+  const pathSet=new Set(tr.path);
+  const visitedP=new Set();const q2=[[0,0]];
+  while(q2.length){
+    const [r,c]=q2.shift();const k=`${r},${c}`;
+    if(visitedP.has(k))continue;visitedP.add(k);
+    [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([nr,nc])=>{
+      const nk=`${nr},${nc}`;if(pathSet.has(nk)&&!visitedP.has(nk))q2.push([nr,nc]);
+    });
+  }
+  if(!visitedP.has(`${sz-1},${sz-1}`)){notify('Path is not connected!','r');return;}
+  clearInterval(tr.timer);sfx.hit();setTimeout(stepWin,400);
+};
+
+// ═══════════════════════════════
+// SHOP
+// ═══════════════════════════════
+const renderShop=()=>{
+  const grid=document.getElementById('shop-grid');grid.innerHTML='';
+  TOOLS.forEach(t=>{
+    const owned=P.tools.has(t.id);const canAfford=P.cr>=t.cost;
+    const card=document.createElement('div');card.className=`tool-card${owned?' owned':''}`;
+    card.innerHTML=`
+      <div class="tool-icon">${t.icon}</div>
+      <div class="tool-name">${t.name}</div>
+      <div class="tool-desc">${t.desc}</div>
+      ${owned
+        ?'<div class="tool-owned">✓ OWNED</div>'
+        :`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto">
+          <div class="tool-cost">$${t.cost}</div>
+          <button class="btn btn-sm btn-shop" onclick="buyTool('${t.id}')" ${!canAfford?'disabled':''}>BUY</button>
+        </div>`
+      }`;
+    grid.appendChild(card);
+  });
+  refreshHUD();
+};
+const buyTool=id=>{
+  const t=TOOLS.find(x=>x.id===id);if(!t||P.tools.has(id)||P.cr<t.cost)return;
+  P.cr-=t.cost;P.tools.add(id);sfx.unlock();
+  notify(`${t.icon} ${t.name} unlocked!`,'y');
+  renderShop();save();
+};
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+const hasSave=load();
+if(hasSave&&(P.lvl>1||P.xp>0||P.cr>0)){
+  const si=document.getElementById('save-info');si.style.display='block';
+  document.getElementById('si-lvl').textContent=P.lvl;
+  document.getElementById('si-cr').textContent='$'+P.cr;
+}
+refreshHUD();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#04040e"/>
+      <stop offset="100%" stop-color="#060810"/>
+    </linearGradient>
+    <radialGradient id="charGrad" cx="35%" cy="28%" r="62%">
+      <stop offset="0%" stop-color="#a3e635"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <radialGradient id="gemGrad" cx="30%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#d9f99d"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </radialGradient>
+    <radialGradient id="groundGlow" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="rgba(34,197,94,0.18)"/>
+      <stop offset="100%" stop-color="rgba(34,197,94,0)"/>
+    </radialGradient>
+    <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d2010"/>
+      <stop offset="100%" stop-color="#040906"/>
+    </linearGradient>
+    <radialGradient id="obstacleGrad" cx="50%" cy="0%" r="100%">
+      <stop offset="0%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#1a0540"/>
+    </radialGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="charGlowF" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bg)"/>
+
+  <!-- Stars row 1 -->
+  <circle cx="48"  cy="28"  r="1.3" fill="rgba(255,255,255,0.75)"/>
+  <circle cx="115" cy="55"  r="0.9" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="195" cy="22"  r="1.5" fill="rgba(255,255,255,0.8)"/>
+  <circle cx="278" cy="62"  r="0.8" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="352" cy="18"  r="1.2" fill="rgba(255,255,255,0.65)"/>
+  <circle cx="418" cy="48"  r="0.7" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="495" cy="16"  r="1.1" fill="rgba(255,255,255,0.75)"/>
+  <circle cx="574" cy="42"  r="1.4" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="648" cy="22"  r="0.9" fill="rgba(255,255,255,0.55)"/>
+  <circle cx="718" cy="60"  r="1.2" fill="rgba(255,255,255,0.7)"/>
+  <circle cx="788" cy="28"  r="0.8" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="855" cy="52"  r="1.5" fill="rgba(255,255,255,0.65)"/>
+  <circle cx="882" cy="14"  r="1.0" fill="rgba(255,255,255,0.8)"/>
+  <!-- Stars row 2 -->
+  <circle cx="72"  cy="118" r="0.8" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="155" cy="148" r="1.1" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="235" cy="108" r="0.7" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="328" cy="138" r="1.0" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="435" cy="98"  r="1.3" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="528" cy="132" r="0.9" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="618" cy="105" r="1.1" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="698" cy="142" r="0.8" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="798" cy="112" r="1.4" fill="rgba(255,255,255,0.55)"/>
+  <circle cx="868" cy="88"  r="0.7" fill="rgba(255,255,255,0.5)"/>
+  <!-- Glowing green stars -->
+  <circle cx="302" cy="50"  r="1.8" fill="rgba(163,230,53,0.7)"  filter="url(#softGlow)"/>
+  <circle cx="598" cy="76"  r="1.5" fill="rgba(163,230,53,0.6)"  filter="url(#softGlow)"/>
+  <circle cx="748" cy="38"  r="1.6" fill="rgba(163,230,53,0.65)" filter="url(#softGlow)"/>
+  <!-- Scattered mid stars -->
+  <circle cx="25"  cy="198" r="0.8" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="182" cy="218" r="0.7" fill="rgba(255,255,255,0.35)"/>
+  <circle cx="388" cy="182" r="1.0" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="455" cy="228" r="0.6" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="558" cy="192" r="0.9" fill="rgba(255,255,255,0.45)"/>
+  <circle cx="668" cy="208" r="1.1" fill="rgba(255,255,255,0.35)"/>
+  <circle cx="758" cy="182" r="0.8" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="842" cy="222" r="0.9" fill="rgba(255,255,255,0.4)"/>
+
+  <!-- Mountain layers (far) -->
+  <path d="M0,400 L70,280 L150,340 L245,210 L348,300 L430,235 L515,320 L605,195 L690,275 L765,242 L840,295 L900,255 L900,442 L0,442 Z"
+        fill="hsl(268,38%,11%)"/>
+  <!-- Mountain layers (near) -->
+  <path d="M0,430 L90,345 L185,395 L305,305 L395,368 L505,308 L620,378 L735,318 L858,375 L900,358 L900,442 L0,442 Z"
+        fill="hsl(262,42%,9%)"/>
+
+  <!-- Ground glow halo -->
+  <ellipse cx="160" cy="444" rx="280" ry="55" fill="url(#groundGlow)" opacity="0.8"/>
+
+  <!-- Ground -->
+  <rect x="0" y="442" width="900" height="78" fill="url(#groundGrad)"/>
+  <!-- Ground glow top edge -->
+  <rect x="0" y="440" width="900" height="3" fill="rgba(34,197,94,0.3)"/>
+  <rect x="0" y="443" width="900" height="1" fill="rgba(74,222,128,0.12)"/>
+  <!-- Ground subtle lines -->
+  <line x1="0" y1="458" x2="900" y2="458" stroke="rgba(34,197,94,0.07)" stroke-width="1"/>
+  <line x1="0" y1="474" x2="900" y2="474" stroke="rgba(34,197,94,0.04)" stroke-width="1"/>
+
+  <!-- Speed motion lines -->
+  <line x1="0" y1="395" x2="72" y2="395" stroke="rgba(255,255,255,0.04)" stroke-width="1.5"/>
+  <line x1="0" y1="372" x2="55" y2="372" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  <line x1="0" y1="412" x2="88" y2="412" stroke="rgba(255,255,255,0.04)" stroke-width="1.5"/>
+  <line x1="0" y1="355" x2="40" y2="355" stroke="rgba(255,255,255,0.025)" stroke-width="1"/>
+
+  <!-- ── Obstacle ── -->
+  <rect x="548" y="368" width="44" height="74" rx="7" fill="rgba(88,28,135,0.18)" filter="url(#softGlow)"/>
+  <rect x="552" y="372" width="36" height="66" rx="5" fill="url(#obstacleGrad)"/>
+  <rect x="552" y="372" width="36" height="66" rx="5" fill="none" stroke="rgba(167,139,250,0.55)" stroke-width="2"/>
+  <rect x="556" y="376" width="28" height="58" rx="3" fill="rgba(109,40,217,0.25)"/>
+
+  <!-- Obstacle 2 (far) -->
+  <rect x="738" y="390" width="38" height="52" rx="5" fill="url(#obstacleGrad)" opacity="0.7"/>
+  <rect x="738" y="390" width="38" height="52" rx="5" fill="none" stroke="rgba(167,139,250,0.4)" stroke-width="1.5"/>
+
+  <!-- ── Gems (star-shape collectibles) ── -->
+  <!-- Gem 1 -->
+  <g filter="url(#glow)">
+    <polygon points="372,308 379,325 397,325 383,336 389,353 372,342 355,353 361,336 347,325 365,325"
+             fill="url(#gemGrad)"/>
+  </g>
+  <!-- Gem 2 -->
+  <g filter="url(#glow)" opacity="0.9">
+    <polygon points="460,282 466,297 482,297 470,306 475,321 460,312 445,321 450,306 438,297 454,297"
+             fill="url(#gemGrad)"/>
+  </g>
+  <!-- Gem 3 (distant, smaller) -->
+  <g filter="url(#glow)" opacity="0.65">
+    <polygon points="645,264 649,275 661,275 652,283 655,294 645,287 635,294 638,283 629,275 641,275"
+             fill="url(#gemGrad)"/>
+  </g>
+
+  <!-- ── Player Character (Buddy) ── -->
+  <!-- Trail (fading copies) -->
+  <rect x="50" y="392" width="40" height="48" rx="13" fill="rgba(134,239,172,0.05)"/>
+  <rect x="63" y="390" width="41" height="50" rx="13" fill="rgba(134,239,172,0.09)"/>
+  <rect x="77" y="388" width="42" height="51" rx="13" fill="rgba(134,239,172,0.14)"/>
+  <!-- Body glow -->
+  <rect x="86" y="385" width="48" height="54" rx="15" fill="rgba(74,222,128,0.2)" filter="url(#charGlowF)"/>
+  <!-- Body -->
+  <rect x="90" y="388" width="44" height="50" rx="14" fill="url(#charGrad)"/>
+  <!-- Body highlight shine -->
+  <ellipse cx="104" cy="397" rx="8" ry="4.5" fill="rgba(255,255,255,0.22)" transform="rotate(-12 104 397)"/>
+  <!-- Eyes (white) -->
+  <ellipse cx="103" cy="402" rx="5.5" ry="6.5" fill="white"/>
+  <ellipse cx="121" cy="402" rx="5.5" ry="6.5" fill="white"/>
+  <!-- Pupils -->
+  <ellipse cx="104" cy="403" rx="2.8" ry="3.8" fill="#1a0040"/>
+  <ellipse cx="122" cy="403" rx="2.8" ry="3.8" fill="#1a0040"/>
+  <!-- Eye shine -->
+  <circle cx="102" cy="400" r="1.3" fill="white"/>
+  <circle cx="120" cy="400" r="1.3" fill="white"/>
+  <!-- Smile -->
+  <path d="M103,412 Q112,419 123,412" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.65"/>
+  <!-- Star crown on top -->
+  <g filter="url(#softGlow)">
+    <polygon points="112,385 118,370 124,385 139,379 129,390" fill="rgba(200,255,0,0.85)"/>
+  </g>
+  <!-- Legs -->
+  <rect x="97" y="434" width="11" height="15" rx="4" fill="#166534"/>
+  <rect x="115" y="434" width="11" height="15" rx="4" fill="#166534"/>
+
+  <!-- ── HUD ── -->
+  <!-- Score (left) -->
+  <rect x="18" y="14" width="92" height="48" rx="10" fill="rgba(0,0,0,0.42)"/>
+  <rect x="18" y="14" width="92" height="48" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <text x="64" y="31" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="9" letter-spacing="2" fill="rgba(255,255,255,0.38)">SCORE</text>
+  <text x="64" y="52" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" fill="#4ade80">1240</text>
+
+  <!-- Player tag (center) -->
+  <rect x="368" y="14" width="164" height="42" rx="21" fill="rgba(0,0,0,0.42)"/>
+  <rect x="368" y="14" width="164" height="42" rx="21" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <circle cx="393" cy="35" r="14" fill="rgba(34,197,94,0.3)"/>
+  <circle cx="393" cy="35" r="14" fill="none" stroke="rgba(74,222,128,0.5)" stroke-width="1.5"/>
+  <text x="393" y="40" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" font-weight="700" fill="#4ade80">AH</text>
+  <text x="450" y="40" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="700" fill="white">Ayan</text>
+
+  <!-- Best score (right) -->
+  <rect x="790" y="14" width="92" height="48" rx="10" fill="rgba(0,0,0,0.42)"/>
+  <rect x="790" y="14" width="92" height="48" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <text x="836" y="31" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="9" letter-spacing="2" fill="rgba(255,255,255,0.38)">BEST</text>
+  <text x="836" y="52" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" fill="#4ade80">3580</text>
+</svg>

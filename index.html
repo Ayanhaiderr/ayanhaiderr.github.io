@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Video Editor & Web Developer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- Noise overlay -->
+  <div class="noise"></div>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">AH<span>.</span></a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#portfolio">Work</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about" class="mobile-link">About</a>
+    <a href="#portfolio" class="mobile-link">Work</a>
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#contact" class="mobile-link">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <canvas id="particleCanvas" aria-hidden="true"></canvas>
+      <div class="hero-grid"></div>
+      <div class="hero-orb orb-1"></div>
+      <div class="hero-orb orb-2"></div>
+      <div class="hero-orb orb-3"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-tag cin-tag">Available for projects</div>
+      <h1
+        class="cinematic-text"
+        aria-label="Motion. Code. Impact."
+      >
+        <span class="cin-line cin-line-1" aria-hidden="true">Motion.</span>
+        <span class="cin-line cin-line-2" aria-hidden="true">Code.</span>
+        <span class="cin-line cin-line-3" aria-hidden="true"><em class="cin-em">Impact.</em></span>
+      </h1>
+      <p class="hero-sub cin-sub">Video Editor · Web Developer · Creative Director</p>
+      <div class="hero-cta cin-cta">
+        <a href="#portfolio" class="btn btn-primary">View Work</a>
+        <a href="#contact" class="btn btn-ghost">Let's Talk</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat reveal-up delay-3">
+        <span class="stat-num" data-target="50">0</span><span class="stat-sym">+</span>
+        <span class="stat-label">Projects</span>
+      </div>
+      <div class="stat reveal-up delay-4">
+        <span class="stat-num" data-target="5">0</span><span class="stat-sym">+</span>
+        <span class="stat-label">Years Exp.</span>
+      </div>
+      <div class="stat reveal-up delay-5">
+        <span class="stat-num" data-target="30">0</span><span class="stat-sym">+</span>
+        <span class="stat-label">Clients</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="section-label reveal-left">— About Me</div>
+      <div class="about-grid">
+        <div class="about-left">
+          <div class="about-img-wrap reveal-scale">
+            <div class="about-img-bg"></div>
+            <div class="about-img-placeholder">
+              <img src="profile.jpg.jpeg" alt="Profile photo" class="about-photo" />
+            </div>
+            <div class="about-name reveal-up">
+              <span class="about-name-text">Ayan Haider</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-right">
+          <h2 class="section-title reveal-up">I tell stories through<br /><em>motion &amp; code.</em></h2>
+          <p class="about-text reveal-up delay-1">
+            I'm a dual-discipline creative — I cut films that move people and build websites that feel alive.
+            With a background spanning cinematic video editing and full-stack web development, I bring a unique
+            perspective to every project: the eye of a filmmaker and the precision of an engineer.
+          </p>
+          <p class="about-text reveal-up delay-2">
+            Whether it's a brand commercial, a YouTube series, or a product-launch site, I obsess over
+            the details that turn good work into something unforgettable.
+          </p>
+          <div class="about-skills reveal-up delay-3">
+            <div class="skill-col">
+              <h4>Video</h4>
+              <ul>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/premierepro/premierepro-original.svg">Premiere Pro</li>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg">After Effects</li>
+                <li class="skill-item" data-logo="capcut-logo-on-transparent-white-background-free-vector.jpg">CapCut</li>
+                <li class="skill-item">Color Grading</li>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg">Motion Graphics</li>
+              </ul>
+            </div>
+            <div class="skill-col">
+              <h4>Web</h4>
+              <ul>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg">React / Next.js</li>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg">TypeScript</li>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg">Node.js</li>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg">Tailwind CSS</li>
+                <li class="skill-item" data-logo="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/framermotion/framermotion-original.svg">Framer Motion</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="portfolio">
+    <canvas class="section-particles" aria-hidden="true"></canvas>
+    <div class="container">
+      <div class="section-label reveal-left">— Selected Work</div>
+      <h2 class="section-title reveal-up">Projects that<br /><em>define the craft.</em></h2>
+
+      <!-- ── VIDEO COVERFLOW ── -->
+      <div class="cf-block reveal-up delay-1">
+        <p class="cf-sub-label">Video Edits</p>
+        <div class="cf-outer">
+          <button class="cf-arrow cf-prev" aria-label="Previous">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="cf-stage" id="videoCF">
+
+            <div class="cf-item" data-video="videoss/1.Cuett.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:220"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/1.Cuett.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>CUET</h3>
+                  <p>Cinematic edit with dynamic cuts, intentional pacing, and a strong visual identity.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/2.Loann.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:280"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/2.Loann.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>LOAN</h3>
+                  <p>Narrative-driven edit with smooth transitions, color grading, and a compelling story arc.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/3. Sectionn45.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:10"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/3. Sectionn45.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>Section 45</h3>
+                  <p>High-energy sequence with beat-synced cuts, VFX touches, and a bold cinematic finish.</p>
+                </div>
+              </div>
+            </div>
+
+<div class="cf-item" data-video="videoss/agla.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:195"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/agla.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>Agla</h3>
+                  <p>Forward-moving narrative piece with layered soundscape and deliberate visual rhythm.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/hogya.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:340"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/hogya.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>Ho Gaya</h3>
+                  <p>Energetic cut built around a punchy audio drop — tight transitions and bold color grade.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/merchant3.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:205"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/merchant3.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>Merchant Navy</h3>
+                  <p>Ocean-themed cinematic reel — wide shots, atmospheric grade, and a steady epic pace.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/merchantz.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:215"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/merchantz.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Video Editing</span><span class="year">2024</span></div>
+                  <h3>Merchant Navy — Z</h3>
+                  <p>Alternate cut with tighter pacing, added motion blur, and a reworked colour story.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/newteaser.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:45"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/newteaser.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Teaser</span><span class="year">2025</span></div>
+                  <h3>New Teaser</h3>
+                  <p>Punchy teaser cut built for social — fast hooks, sharp sound design, maximum impact.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-video="videoss/teaser.mp4">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:270"></div>
+                  <video class="card-preview" preload="metadata" muted playsinline loop>
+                    <source src="videoss/teaser.mp4" type="video/mp4">
+                  </video>
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">Teaser</span><span class="year">2025</span></div>
+                  <h3>Teaser Reel</h3>
+                  <p>High-octane teaser reel showcasing range — genre-bending edits from drama to action.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <button class="cf-arrow cf-next" aria-label="Next">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="cf-dots" id="videoDots">
+          <button class="cf-dot active" aria-label="Slide 1"></button>
+          <button class="cf-dot" aria-label="Slide 2"></button>
+          <button class="cf-dot" aria-label="Slide 3"></button>
+          <button class="cf-dot" aria-label="Slide 4"></button>
+          <button class="cf-dot" aria-label="Slide 5"></button>
+          <button class="cf-dot" aria-label="Slide 6"></button>
+          <button class="cf-dot" aria-label="Slide 7"></button>
+          <button class="cf-dot" aria-label="Slide 8"></button>
+          <button class="cf-dot" aria-label="Slide 9"></button>
+        </div>
+      </div>
+
+      <!-- ── WEB COVERFLOW ── -->
+      <div class="cf-block reveal-up delay-2">
+        <p class="cf-sub-label">Web Projects</p>
+        <div class="cf-outer">
+          <button class="cf-arrow cf-prev" aria-label="Previous">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="cf-stage" id="webCF">
+
+            <div class="cf-item" data-href="game.html" data-target="_blank">
+              <div class="cf-card">
+                <div class="cf-thumb cf-thumb-img">
+                  <img src="game-thumb.svg" alt="Emerald Rush" loading="lazy" />
+                  <div class="cf-play-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">JS Game</span><span class="year">2025</span></div>
+                  <h3>Emerald Rush</h3>
+                  <p>Fast-paced browser runner built with vanilla JS &amp; Canvas API. Dodge, collect, survive.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item" data-href="hacksim.html" data-target="_blank">
+              <div class="cf-card">
+                <div class="cf-thumb cf-thumb-img">
+                  <img src="hacksim-thumb.svg" alt="HACKSIM" loading="lazy" />
+                  <div class="cf-play-icon" style="color:#00ff88;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta"><span class="tag">JS Game</span><span class="year">2025</span></div>
+                  <h3>HACKSIM</h3>
+                  <p>Browser-based hacking simulation. Infiltrate systems, crack passwords, complete missions.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cf-item">
+              <div class="cf-card">
+                <div class="cf-thumb">
+                  <div class="thumb-bg" style="--hue:45"></div>
+                  <div class="thumb-icon web-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
+                </div>
+                <div class="cf-info">
+                  <div class="portfolio-meta">
+                    <span class="tag">React</span><span class="year">2023</span>
+                    <span class="tag" style="background:rgba(255,180,0,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">Coming Soon…</span>
+                  </div>
+                  <h3>Creative Agency Website</h3>
+                  <p>Agency site with scroll animations, WebGL background, and a custom CMS.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <button class="cf-arrow cf-next" aria-label="Next">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="cf-dots" id="webDots">
+          <button class="cf-dot active" aria-label="Slide 1"></button>
+          <button class="cf-dot" aria-label="Slide 2"></button>
+          <button class="cf-dot" aria-label="Slide 3"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span>Video Editing</span><span class="dot">·</span>
+        <span>Motion Graphics</span><span class="dot">·</span>
+        <span>Color Grading</span><span class="dot">·</span>
+        <span>Web Development</span><span class="dot">·</span>
+        <span>React</span><span class="dot">·</span>
+        <span>Next.js</span><span class="dot">·</span>
+        <span>After Effects</span><span class="dot">·</span>
+        <span>CapCut</span><span class="dot">·</span>
+        <span>Brand Identity</span><span class="dot">·</span>
+        <span>UI / UX Design</span><span class="dot">·</span>
+        <span>Video Editing</span><span class="dot">·</span>
+        <span>Motion Graphics</span><span class="dot">·</span>
+        <span>Color Grading</span><span class="dot">·</span>
+        <span>Web Development</span><span class="dot">·</span>
+        <span>React</span><span class="dot">·</span>
+        <span>Next.js</span><span class="dot">·</span>
+        <span>After Effects</span><span class="dot">·</span>
+        <span>CapCut</span><span class="dot">·</span>
+        <span>Brand Identity</span><span class="dot">·</span>
+        <span>UI / UX Design</span><span class="dot">·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-label reveal-left">— Services</div>
+      <h2 class="section-title reveal-up">What I bring<br /><em>to the table.</em></h2>
+
+      <div class="services-grid">
+        <div class="service-card reveal-up delay-1">
+          <div class="service-num">01</div>
+          <div class="service-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l4.553-2.069A1 1 0 0121 8.845v6.31a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+          </div>
+          <h3>Video Editing</h3>
+          <p>From raw footage to polished final cut — commercials, vlogs, documentaries, social content. Every frame intentional.</p>
+          <div class="service-tags">
+            <span>Premiere Pro</span><span>After Effects</span><span>DaVinci</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal-up delay-2">
+          <div class="service-num">02</div>
+          <div class="service-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </div>
+          <h3>Motion Graphics</h3>
+          <p>Logo animations, title sequences, lower thirds, and animated ads that make brands leap off the screen.</p>
+          <div class="service-tags">
+            <span>After Effects</span><span>Cinema 4D</span><span>Lottie</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal-up delay-3">
+          <div class="service-num">03</div>
+          <div class="service-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Web Development</h3>
+          <p>Pixel-perfect, performant websites and apps — from landing pages to complex full-stack platforms.</p>
+          <div class="service-tags">
+            <span>React</span><span>Next.js</span><span>Node.js</span>
+          </div>
+        </div>
+
+        <div class="service-card reveal-up delay-4">
+          <div class="service-num">04</div>
+          <div class="service-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <h3>UI / UX Design</h3>
+          <p>Intuitive interfaces designed with real users in mind. Wireframes, prototypes, design systems, and handoff-ready specs.</p>
+          <div class="service-tags">
+            <span>Figma</span><span>Prototyping</span><span>Design Systems</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process">
+    <canvas class="section-particles" aria-hidden="true"></canvas>
+    <div class="container">
+      <div class="section-label reveal-left">— My Process</div>
+      <div class="process-steps">
+        <div class="process-step reveal-up delay-1">
+          <div class="step-line"></div>
+          <div class="step-num">1</div>
+          <h4>Discovery</h4>
+          <p>Deep-dive into your brand, goals, and audience to align creative direction.</p>
+        </div>
+        <div class="process-step reveal-up delay-2">
+          <div class="step-line"></div>
+          <div class="step-num">2</div>
+          <h4>Concept</h4>
+          <p>Develop a clear creative brief and visual direction before a single pixel is moved.</p>
+        </div>
+        <div class="process-step reveal-up delay-3">
+          <div class="step-line"></div>
+          <div class="step-num">3</div>
+          <h4>Craft</h4>
+          <p>Execute with precision — every cut, every component built to a high standard.</p>
+        </div>
+        <div class="process-step reveal-up delay-4">
+          <div class="step-line"></div>
+          <div class="step-num">4</div>
+          <h4>Deliver</h4>
+          <p>Launch-ready deliverables, full handoff, and ongoing support if needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-bg">
+      <div class="contact-orb"></div>
+    </div>
+    <div class="container">
+      <div class="section-label reveal-left">— Contact</div>
+      <div class="contact-grid">
+        <div class="contact-left">
+          <h2 class="section-title reveal-up">Have a project<br /><em>in mind?</em></h2>
+          <p class="contact-sub reveal-up delay-1">
+            Let's build something that turns heads. Whether it's a 60-second reel or a full-stack platform — I'm in.
+          </p>
+          <div class="contact-links reveal-up delay-2">
+            <a href="mailto:ayanhaider4456@gmail.com" class="contact-link">
+              <span>ayanhaider4456@gmail.com</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener" class="contact-link">
+              <span>Instagram</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener" class="contact-link">
+              <span>LinkedIn</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="contact-right reveal-up delay-2">
+          <form class="contact-form" id="contactForm">
+            <div class="form-group">
+              <input type="text" id="name" name="name" placeholder=" " required />
+              <label for="name">Your Name</label>
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" name="email" placeholder=" " required />
+              <label for="email">Email Address</label>
+            </div>
+            <div class="form-group">
+              <select id="service" name="service" required>
+                <option value="" disabled selected></option>
+                <option value="video">Video Editing</option>
+                <option value="motion">Motion Graphics</option>
+                <option value="web">Web Development</option>
+                <option value="design">UI / UX Design</option>
+                <option value="other">Other</option>
+              </select>
+              <label for="service">Service</label>
+            </div>
+            <div class="form-group">
+              <textarea id="message" name="message" placeholder=" " rows="4" required></textarea>
+              <label for="message">Tell me about your project</label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">
+              <span>Send Message</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <canvas class="section-particles" aria-hidden="true"></canvas>
+    <div class="container">
+      <div class="footer-top">
+        <div class="nav-logo footer-logo">AH<span>.</span></div>
+        <p>Video Editor &amp; Web Developer</p>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 All rights reserved.</span>
+        <span>Crafted with precision</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Skill tooltip -->
+  <div class="skill-tooltip" id="skillTooltip">
+    <img id="skillTooltipImg" src="" alt="" />
+  </div>
+
+  <!-- Video Lightbox -->
+  <div class="video-lightbox" id="videoLightbox" role="dialog" aria-modal="true" aria-label="Video player">
+    <div class="lightbox-overlay" id="lightboxOverlay"></div>
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close video">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <video class="lightbox-video" id="lightboxVideo" controls playsinline>
+        <source id="lightboxSource" src="" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
