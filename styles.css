@@ -1797,8 +1797,8 @@ section { padding: 120px 0; }
     position: absolute;
     inset: 0;
     background-image:
-      radial-gradient(circle, rgba(200, 255, 0, 0.18) 1.5px, transparent 1.5px);
-    background-size: 30px 30px;
+      radial-gradient(circle, rgba(200, 255, 0, 0.14) 1px, transparent 1px);
+    background-size: 48px 48px;
     pointer-events: none;
     z-index: 0;
   }
