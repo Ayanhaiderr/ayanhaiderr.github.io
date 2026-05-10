@@ -33,9 +33,9 @@ const isLowEnd = (() => {
   const mem   = navigator.deviceMemory;
   const cores = navigator.hardwareConcurrency;
   const conn  = navigator.connection?.effectiveType;
-  if (mem  !== undefined && mem  >= 6) return false;
-  if (mem  !== undefined && mem  <  4) return true;
-  if (cores !== undefined && cores <= 4) return true;
+  if (mem  !== undefined && mem  >= 8) return false;
+  if (mem  !== undefined && mem  <= 4) return true;
+  if (cores !== undefined && cores <= 6) return true;
   if (conn === '2g' || conn === 'slow-2g' || conn === '3g') return true;
   return false;
 })();
@@ -184,8 +184,7 @@ function initCoverflow(stageId, dotsId, onActivate) {
     return d >= 0 ? 1 : -1;
   }
 
-  function applyItemStyle(item, pos) {
-    const cardW = cfItems[0]?.offsetWidth || 460;
+  function applyItemStyle(item, pos, cardW) {
     const isMob = window.innerWidth <= 600;
     const step  = cardW * (isMob ? 0.68 : 0.74);
     const abs   = Math.abs(pos);
@@ -200,30 +199,28 @@ function initCoverflow(stageId, dotsId, onActivate) {
   }
 
   function render(instant) {
+    const cardW = cfItems[0]?.offsetWidth || 460;
     cfItems.forEach((item, i) => {
       const pos = getPos(i, active);
       if (instant) item.style.transition = 'none';
-      applyItemStyle(item, pos);
+      applyItemStyle(item, pos, cardW);
       item.classList.toggle('cf-active', pos === 0);
       if (instant) requestAnimationFrame(() => { item.style.transition = ''; });
 
-      /* video preview */
       const vid = item.querySelector('.card-preview');
       if (vid) {
         if (pos === 0) {
-          /* preload the active card fully so it plays without black frames */
           vid.setAttribute('preload', 'auto');
           vid.currentTime = 0;
           vid.play().catch(() => {});
         } else {
           vid.pause();
-          /* seek to thumbnail frame (15%) so non-active cards show a still,
-             not a black frame — only possible once metadata is loaded */
-          if (vid.readyState >= 1 && vid.duration && !isNaN(vid.duration)) {
-            vid.currentTime = vid.duration * 0.15;
-          } else {
-            /* metadata not yet loaded — trigger it and seek on loadedmetadata */
-            if (vid.getAttribute('preload') === 'none') vid.setAttribute('preload', 'metadata');
+          if (!isTouchDevice) {
+            if (vid.readyState >= 1 && vid.duration && !isNaN(vid.duration)) {
+              vid.currentTime = vid.duration * 0.15;
+            } else {
+              if (vid.getAttribute('preload') === 'none') vid.setAttribute('preload', 'metadata');
+            }
           }
         }
       }
@@ -249,18 +246,17 @@ function initCoverflow(stageId, dotsId, onActivate) {
     active = ((idx % total) + total) % total;
     if (prevActive === active) return;
 
-    const dir = getDir(prevActive, active);
+    const dir   = getDir(prevActive, active);
+    const cardW = cfItems[0]?.offsetWidth || 460;
 
-    /* The one item whose circular pos jumps by >1 is wrapping around.
-       Teleport it one step further off-screen so it slides IN from the edge. */
     cfItems.forEach((item, i) => {
       const oldPos = getPos(i, prevActive);
       const newPos = getPos(i, active);
       if (Math.abs(newPos - oldPos) > 1) {
         item.style.transition = 'none';
-        applyItemStyle(item, newPos + dir); /* off-screen start position */
-        void item.offsetHeight;             /* force reflow — commits position */
-        item.style.transition = '';         /* restore CSS transition */
+        applyItemStyle(item, newPos + dir, cardW);
+        void item.offsetHeight;
+        item.style.transition = '';
       }
     });
 
@@ -599,32 +595,19 @@ function createParticles(canvas, overrides) {
   tick();
 }
 
-/* ── Initialise all particle canvases ── */
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const mobNoLines = isTouchDevice ? { noLines: true } : {};
+/* ── Initialise all particle canvases (desktop only) ── */
+if (!isTouchDevice && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  createParticles(document.getElementById('particleCanvas'));
 
-  if (isLowEnd) {
-    /* Low-end phones: hero only, minimal dots, no lines */
-    createParticles(document.getElementById('particleCanvas'), {
-      countMob: 12, noLines: true,
-      minOpacity: 0.25, maxOpacity: 0.55,
+  document.querySelectorAll('.section-particles').forEach(canvas => {
+    createParticles(canvas, {
+      countDesk:   48,
+      connectDist: 115,
+      lineAlpha:   0.058,
+      minOpacity:  0.22,
+      maxOpacity:  0.55,
     });
-    /* skip section-particles entirely on low-end */
-  } else {
-    /* Desktop: full experience */
-    createParticles(document.getElementById('particleCanvas'), mobNoLines);
-
-    document.querySelectorAll('.section-particles').forEach(canvas => {
-      createParticles(canvas, Object.assign({
-        countDesk:   48,
-        countMob:    22,
-        connectDist: 115,
-        lineAlpha:   0.058,
-        minOpacity:  0.22,
-        maxOpacity:  0.55,
-      }, mobNoLines));
-    });
-  }
+  });
 }
 
 /* ── Skill logo tooltips ── */
