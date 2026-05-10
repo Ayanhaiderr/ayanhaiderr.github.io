@@ -39,7 +39,7 @@ const isLowEnd = (() => {
   if (conn === '2g' || conn === 'slow-2g' || conn === '3g') return true;
   return false;
 })();
-if (isLowEnd) document.documentElement.classList.add('low-end');
+/* CSS @media (pointer:coarse) handles visual optimizations — no class needed */
 
 /* ── Custom Cursor (desktop only) ── */
 const cursor         = document.getElementById('cursor');
@@ -189,8 +189,8 @@ function initCoverflow(stageId, dotsId, onActivate) {
     const step  = cardW * (isMob ? 0.68 : 0.74);
     const abs   = Math.abs(pos);
     const tx    = pos * step;
-    const tz    = isLowEnd ? 0 : -(abs * (isMob ? 55 : 85));
-    const ry    = isLowEnd ? 0 : -(pos * (isMob ? 15 : 20));
+    const tz    = isTouchDevice ? 0 : -(abs * 85);
+    const ry    = isTouchDevice ? 0 : -(pos * 20);
     const sc    = abs === 0 ? 1 : Math.max(0.48, 0.82 - (abs - 1) * 0.18);
     const op    = abs === 0 ? 1 : Math.max(0.12, 0.72 - abs * 0.24);
     item.style.transform = `translateX(calc(-50% + ${tx}px)) translateY(-50%) translateZ(${tz}px) rotateY(${ry}deg) scale(${sc})`;
@@ -435,12 +435,16 @@ document.head.appendChild(style);
    than frame 0 (which is often black).
 ────────────────────────────────────────────────────────────────────────── */
 document.querySelectorAll('.card-preview').forEach(vid => {
-  vid.addEventListener('loadedmetadata', () => {
-    vid.currentTime = vid.duration * 0.15;
-  });
-  vid.addEventListener('seeked', () => {
+  if (!isTouchDevice) {
+    vid.addEventListener('loadedmetadata', () => {
+      vid.currentTime = vid.duration * 0.15;
+    });
+    vid.addEventListener('seeked', () => {
+      vid.classList.add('loaded');
+    });
+  } else {
     vid.classList.add('loaded');
-  });
+  }
 });
 
 /* ── Video Lightbox ─────────────────────────────────────────────────────*/

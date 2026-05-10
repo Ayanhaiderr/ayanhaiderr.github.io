@@ -1715,64 +1715,77 @@ section { padding: 120px 0; }
 }
 
 /* ─────────────────────────────────────────────
-   LOW-END DEVICE OVERRIDES
-   Applied via JS: touch + (deviceMemory ≤ 4GB
-   or hardwareConcurrency ≤ 6 cores).
+   MOBILE PERFORMANCE OVERRIDES
+   Applies to ALL touch/pointer:coarse devices.
+   Goal: butter-smooth scroll & interaction.
 ───────────────────────────────────────────── */
+@media (pointer: coarse) {
 
-/* Kill all backdrop-filter (nav re-composites entire page on every scroll) */
-html.low-end .nav,
-html.low-end .nav.scrolled {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(10,10,10,0.97) !important;
-}
-html.low-end .mobile-menu {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(10,10,10,0.99) !important;
-}
-html.low-end .cf-card {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: rgba(18,18,18,0.98) !important;
-}
-html.low-end .lightbox-overlay {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
+  /* 1. BACKDROP-FILTER — #1 scroll lag cause.
+        Fixed nav with backdrop-filter re-blurs
+        the entire page on every scroll frame. */
+  .nav,
+  .nav.scrolled {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(8, 8, 8, 0.96) !important;
+    transition: padding 0.3s ease, background 0.3s ease !important;
+  }
+  .mobile-menu {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(8, 8, 8, 0.99) !important;
+  }
+  .cf-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(16, 16, 16, 0.98) !important;
+  }
+  .lightbox-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+  }
 
-/* Kill cinematic filter:blur animations — biggest per-frame repaint cost */
-html.low-end .cin-tag,
-html.low-end .cin-line,
-html.low-end .cin-sub,
-html.low-end .cin-cta {
-  animation-duration: 0.01ms !important;
-  animation-delay: 0s !important;
-  will-change: auto !important;
+  /* 2. FILTER ANIMATIONS — biggest repaint cost
+        on page load. perspective()+rotateX()+blur()
+        forces full rasterize every frame. */
+  .cin-tag,
+  .cin-line,
+  .cin-sub,
+  .cin-cta {
+    animation-duration: 0.01ms !important;
+    animation-delay:    0s !important;
+    will-change: auto !important;
+  }
+
+  /* 3. DECORATIVE LAYERS — each is a separate
+        GPU compositor layer eating memory. */
+  .hero-orb        { display: none !important; }
+  .noise           { display: none !important; }
+  .section-particles { display: none !important; }
+  .cursor,
+  .cursor-follower { display: none !important; }
+
+  /* 4. COVERFLOW — flat 2D, no perspective,
+        short transitions. */
+  .cf-stage { perspective: none !important; }
+  .cf-item  {
+    transition:
+      transform 0.18s ease-out,
+      opacity   0.18s ease-out !important;
+    will-change: auto !important;
+  }
+
+  /* 5. SCROLL REVEAL — snap in quickly. */
+  .reveal-up,
+  .reveal-left,
+  .reveal-scale {
+    transition-duration: 0.15s !important;
+    will-change: auto !important;
+  }
+
+  /* 6. HERO BACKGROUND — the grid + parallax
+        canvas are gone; keep bg simple. */
+  .hero-grid { display: none !important; }
 }
-
-/* Remove hero orbs (filter:blur(100px) + CSS animation) */
-html.low-end .hero-orb { display: none !important; }
-
-/* Remove noise layer (extra composited layer) */
-html.low-end .noise { display: none !important; }
-
-/* Remove cursor (already JS-disabled, belt & suspenders) */
-html.low-end .cursor,
-html.low-end .cursor-follower { display: none !important; }
-
-/* Faster, lighter transitions */
-html.low-end .cf-item {
-  transition:
-    transform 0.2s ease-out,
-    opacity   0.2s ease-out !important;
-}
-html.low-end .reveal-up,
-html.low-end .reveal-left,
-html.low-end .reveal-scale {
-  transition-duration: 0.2s !important;
-}
-
-/* Remove perspective — not needed when 3D is off */
-html.low-end .cf-stage { perspective: none !important; }
