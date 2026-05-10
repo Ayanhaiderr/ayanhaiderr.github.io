@@ -26,43 +26,59 @@
   }, SEQUENCE_END_MS);
 })();
 
-/* ── Custom Cursor ── */
+/* ── Device capability detection ── */
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+const isLowEnd = (() => {
+  if (!isTouchDevice) return false;
+  const mem   = navigator.deviceMemory;
+  const cores = navigator.hardwareConcurrency;
+  const conn  = navigator.connection?.effectiveType;
+  if (mem  !== undefined && mem  >= 6) return false;
+  if (mem  !== undefined && mem  <  4) return true;
+  if (cores !== undefined && cores <= 4) return true;
+  if (conn === '2g' || conn === 'slow-2g' || conn === '3g') return true;
+  return false;
+})();
+if (isLowEnd) document.documentElement.classList.add('low-end');
+
+/* ── Custom Cursor (desktop only) ── */
 const cursor         = document.getElementById('cursor');
 const cursorFollower = document.getElementById('cursorFollower');
 
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
+if (!isTouchDevice) {
+  let mouseX = 0, mouseY = 0;
+  let followerX = 0, followerY = 0;
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  cursor.style.left = mouseX + 'px';
-  cursor.style.top  = mouseY + 'px';
-});
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top  = mouseY + 'px';
+  });
 
-function animateFollower() {
-  followerX += (mouseX - followerX) * 0.1;
-  followerY += (mouseY - followerY) * 0.1;
-  cursorFollower.style.left = followerX + 'px';
-  cursorFollower.style.top  = followerY + 'px';
-  requestAnimationFrame(animateFollower);
+  function animateFollower() {
+    followerX += (mouseX - followerX) * 0.1;
+    followerY += (mouseY - followerY) * 0.1;
+    cursorFollower.style.left = followerX + 'px';
+    cursorFollower.style.top  = followerY + 'px';
+    requestAnimationFrame(animateFollower);
+  }
+  animateFollower();
+
+  const hoverTargets = document.querySelectorAll(
+    'a, button, .portfolio-card, .service-card, .tab, .contact-link, .about-name-text'
+  );
+  hoverTargets.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.classList.add('hover');
+      cursorFollower.classList.add('hover');
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.classList.remove('hover');
+      cursorFollower.classList.remove('hover');
+    });
+  });
 }
-animateFollower();
-
-// Hover effect on interactive elements
-const hoverTargets = document.querySelectorAll(
-  'a, button, .portfolio-card, .service-card, .tab, .contact-link, .about-name-text'
-);
-hoverTargets.forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.classList.add('hover');
-    cursorFollower.classList.add('hover');
-  });
-  el.addEventListener('mouseleave', () => {
-    cursor.classList.remove('hover');
-    cursorFollower.classList.remove('hover');
-  });
-});
 
 /* ── Nav scroll behaviour ── */
 const nav = document.getElementById('nav');
@@ -174,8 +190,8 @@ function initCoverflow(stageId, dotsId, onActivate) {
     const step  = cardW * (isMob ? 0.68 : 0.74);
     const abs   = Math.abs(pos);
     const tx    = pos * step;
-    const tz    = -(abs * (isMob ? 55 : 85));
-    const ry    = -(pos * (isMob ? 15 : 20));
+    const tz    = isLowEnd ? 0 : -(abs * (isMob ? 55 : 85));
+    const ry    = isLowEnd ? 0 : -(pos * (isMob ? 15 : 20));
     const sc    = abs === 0 ? 1 : Math.max(0.48, 0.82 - (abs - 1) * 0.18);
     const op    = abs === 0 ? 1 : Math.max(0.12, 0.72 - abs * 0.24);
     item.style.transform = `translateX(calc(-50% + ${tx}px)) translateY(-50%) translateZ(${tz}px) rotateY(${ry}deg) scale(${sc})`;
@@ -477,6 +493,7 @@ function createParticles(canvas, overrides) {
     countDesk:   65,
     countMob:    32,
     connectDist: 130,
+    noLines:     false,
     minSpeed:    0.10,
     maxSpeed:    0.28,
     minRadius:   0.7,
@@ -518,20 +535,22 @@ function createParticles(canvas, overrides) {
     if (!active) return;
     ctx.clearRect(0, 0, W, H);
 
-    /* connection lines */
-    ctx.lineWidth = 0.6;
-    for (let i = 0; i < particles.length; i++) {
-      const a = particles[i];
-      for (let j = i + 1; j < particles.length; j++) {
-        const b    = particles[j];
-        const dist = Math.hypot(a.x - b.x, a.y - b.y);
-        if (dist < CFG.connectDist) {
-          const alpha = (1 - dist / CFG.connectDist) * CFG.lineAlpha;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(${ACCENT},${alpha.toFixed(3)})`;
-          ctx.stroke();
+    /* connection lines — skipped on mobile/low-end (O(n²) cost) */
+    if (!CFG.noLines) {
+      ctx.lineWidth = 0.6;
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const b    = particles[j];
+          const dist = Math.hypot(a.x - b.x, a.y - b.y);
+          if (dist < CFG.connectDist) {
+            const alpha = (1 - dist / CFG.connectDist) * CFG.lineAlpha;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(${ACCENT},${alpha.toFixed(3)})`;
+            ctx.stroke();
+          }
         }
       }
     }
@@ -582,20 +601,30 @@ function createParticles(canvas, overrides) {
 
 /* ── Initialise all particle canvases ── */
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  /* hero — full density */
-  createParticles(document.getElementById('particleCanvas'));
+  const mobNoLines = isTouchDevice ? { noLines: true } : {};
 
-  /* other sections — slightly subtler */
-  document.querySelectorAll('.section-particles').forEach(canvas => {
-    createParticles(canvas, {
-      countDesk:   48,
-      countMob:    22,
-      connectDist: 115,
-      lineAlpha:   0.058,
-      minOpacity:  0.22,
-      maxOpacity:  0.55,
+  if (isLowEnd) {
+    /* Low-end phones: hero only, minimal dots, no lines */
+    createParticles(document.getElementById('particleCanvas'), {
+      countMob: 12, noLines: true,
+      minOpacity: 0.25, maxOpacity: 0.55,
     });
-  });
+    /* skip section-particles entirely on low-end */
+  } else {
+    /* Desktop: full experience */
+    createParticles(document.getElementById('particleCanvas'), mobNoLines);
+
+    document.querySelectorAll('.section-particles').forEach(canvas => {
+      createParticles(canvas, Object.assign({
+        countDesk:   48,
+        countMob:    22,
+        connectDist: 115,
+        lineAlpha:   0.058,
+        minOpacity:  0.22,
+        maxOpacity:  0.55,
+      }, mobNoLines));
+    });
+  }
 }
 
 /* ── Skill logo tooltips ── */

@@ -1713,3 +1713,52 @@ section { padding: 120px 0; }
   clip: rect(0,0,0,0);
   white-space: nowrap;
 }
+
+/* ─────────────────────────────────────────────
+   LOW-END DEVICE OVERRIDES
+   Applied via JS when deviceMemory < 4GB or
+   hardwareConcurrency <= 4 on touch devices.
+───────────────────────────────────────────── */
+html.low-end .nav {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(10,10,10,0.97);
+}
+html.low-end .mobile-menu {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(10,10,10,0.99);
+}
+html.low-end .cf-card {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html.low-end .lightbox-overlay {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html.low-end .hero-orb {
+  display: none;
+}
+html.low-end .noise {
+  display: none;
+}
+html.low-end .cursor,
+html.low-end .cursor-follower {
+  display: none;
+}
+html.low-end .cin-line,
+html.low-end .cin-tag,
+html.low-end .cin-sub,
+html.low-end .cin-cta {
+  animation-duration: 0.3s !important;
+  filter: none !important;
+}
+html.low-end .reveal-up,
+html.low-end .reveal-left,
+html.low-end .reveal-scale {
+  transition-duration: 0.3s !important;
+}
+html.low-end .cf-item {
+  transition-duration: 0.25s !important;
+}
