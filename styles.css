@@ -1555,6 +1555,9 @@ section { padding: 120px 0; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
 
+  /* Push hero content below fixed nav so tag isn't hidden */
+  .hero { padding-top: 80px; }
+
   .hero-stats {
     position: relative;
     bottom: auto;
@@ -1785,7 +1788,18 @@ section { padding: 120px 0; }
     will-change: auto !important;
   }
 
-  /* 6. HERO BACKGROUND — the grid + parallax
-        canvas are gone; keep bg simple. */
+  /* 6. HERO BACKGROUND — replace grid + canvas
+        with a lightweight CSS dot pattern. */
   .hero-grid { display: none !important; }
+
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(200, 255, 0, 0.18) 1.5px, transparent 1.5px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    z-index: 0;
+  }
 }
