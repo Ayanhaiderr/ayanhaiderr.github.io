@@ -165,7 +165,7 @@ function initCoverflow(stageId, dotsId, onActivate) {
 
   const cfItems = Array.from(stage.querySelectorAll('.cf-item'));
   const total   = cfItems.length;
-  let active    = 0; // start at first item (CUET)
+  let active    = 0; // start at first item
 
   /* Circular distance: shortest arc so positions are always -1, 0, +1 for 3 items */
   function getPos(i, activeIdx) {
